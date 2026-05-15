@@ -1,45 +1,45 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 
-export const useAuthStore = defineStore("auth", () => {
-  const config = useRuntimeConfig();
-  const baseURL = config.public.apiBase as string;
+export const useAuthStore = defineStore('auth', () => {
+  const config = useRuntimeConfig()
+  const baseURL = config.public.apiBase as string
 
-  const user = useCookie<any | null>("admin_user", {
-    sameSite: "lax",
-    path: "/",
+  const user = useCookie<any | null>('admin_user', {
+    sameSite: 'lax',
+    path: '/',
     maxAge: 60 * 60 * 24 * 7,
-    default: () => null,
-  });
-  const isAuthenticated = computed(() => !!user.value);
-  const isAdmin = computed(() => user.value?.role === "ADMIN");
+    default: () => null
+  })
+  const isAuthenticated = computed(() => !!user.value)
+  const isAdmin = computed(() => user.value?.role === 'ADMIN')
 
   async function login(emailOrUsername: string, password: string) {
-    const res = await $fetch<any>("/auth/login", {
+    const res = await $fetch<any>('/auth/login', {
       baseURL,
-      method: "POST",
+      method: 'POST',
       body: { emailOrUsername, password },
-      credentials: "include",
-    });
-    if (res.data.user.role !== "ADMIN") throw new Error("Không có quyền admin");
-    user.value = res.data.user;
-    return res.data;
+      credentials: 'include'
+    })
+    if (res.data.user.role !== 'ADMIN') throw new Error('Không có quyền admin')
+    user.value = res.data.user
+    return res.data
   }
 
   async function doRefresh() {
-    await $fetch<any>("/auth/refresh", {
+    await $fetch<any>('/auth/refresh', {
       baseURL,
-      method: "POST",
-      credentials: "include",
-    });
+      method: 'POST',
+      credentials: 'include'
+    })
   }
 
   async function logout() {
-    await $fetch<any>("/auth/logout", {
+    await $fetch<any>('/auth/logout', {
       baseURL,
-      method: "POST",
-      credentials: "include",
-    });
-    user.value = null;
+      method: 'POST',
+      credentials: 'include'
+    })
+    user.value = null
   }
 
   return {
@@ -48,6 +48,6 @@ export const useAuthStore = defineStore("auth", () => {
     isAdmin,
     login,
     doRefresh,
-    logout,
-  };
-});
+    logout
+  }
+})
