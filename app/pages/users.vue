@@ -275,30 +275,5 @@ function maxPrice(variants: any[]): number {
   return Math.max(...variants.map(v => v.salePrice))
 }
 
-function minOriginalPrice(variants: any[]): number {
-  if (!variants?.length) return 0
-  return Math.min(...variants.map(v => v.originalPrice))
-}
-
-function hasDiscount(variants: any[]): boolean {
-  if (!variants?.length) return false
-  return variants.some(v => v.originalPrice > v.salePrice)
-}
-
-function maxDiscountPercent(variants: any[]): number {
-  if (!variants?.length) return 0
-  return Math.max(
-    ...variants.map((v) => {
-      if (!v.originalPrice || v.originalPrice <= v.salePrice) return 0
-      return Math.round(((v.originalPrice - v.salePrice) / v.originalPrice) * 100)
-    })
-  )
-}
-
-const totalWishlistValue = computed(() =>
-  wishlistItems.value.reduce((sum: number, item: any) => {
-    return sum + minPrice(item.product?.variants)
-  }, 0)
-)
 onMounted(() => store.fetchAll())
 </script>

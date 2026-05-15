@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { Product, PaginatedResponse } from '~/types'
+import type { Product } from '~/types'
 
 export const useProductStore = defineStore('products', () => {
   const { api, upload, uploadPatch } = useApi()
