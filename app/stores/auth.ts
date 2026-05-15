@@ -18,7 +18,10 @@ export const useAuthStore = defineStore('auth', () => {
       baseURL,
       method: 'POST',
       body: { emailOrUsername, password },
-      credentials: 'include'
+      credentials: 'include',
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
     })
     if (res.data.user.role !== 'ADMIN') throw new Error('Không có quyền admin')
     user.value = res.data.user
@@ -29,7 +32,10 @@ export const useAuthStore = defineStore('auth', () => {
     await $fetch<any>('/auth/refresh', {
       baseURL,
       method: 'POST',
-      credentials: 'include'
+      credentials: 'include',
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
     })
   }
 
@@ -37,7 +43,10 @@ export const useAuthStore = defineStore('auth', () => {
     await $fetch<any>('/auth/logout', {
       baseURL,
       method: 'POST',
-      credentials: 'include'
+      credentials: 'include',
+      headers: {
+        'ngrok-skip-browser-warning': 'true'
+      }
     })
     user.value = null
   }

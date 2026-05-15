@@ -16,14 +16,17 @@ export const useApi = () => {
     } = {}
   ): Promise<T> {
     const doFetch = async (): Promise<T> => {
-      const result = await $fetch<{ success: boolean, data: T }>(url, {
+      const result = await $fetch<{ success: boolean; data: T }>(url, {
         baseURL,
-        method: (options.method as any) || 'GET',
+        method: (options.method as any) || "GET",
         body: options.body,
         params: options.query,
-        headers: options.headers || {},
-        credentials: 'include'
-      })
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+          ...options.headers,
+        },
+        credentials: "include",
+      });
       return result.data
     }
 
@@ -50,12 +53,15 @@ export const useApi = () => {
 
   async function upload<T = any>(url: string, formData: FormData): Promise<T> {
     try {
-      const result = await $fetch<{ success: boolean, data: T }>(url, {
+      const result = await $fetch<{ success: boolean; data: T }>(url, {
         baseURL,
-        method: 'POST',
+        method: "POST",
         body: formData,
-        credentials: 'include'
-      })
+        credentials: "include",
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      });
       return result.data
     } catch (error: any) {
       const msg = error?.data?.message || 'Upload thất bại'
@@ -66,12 +72,15 @@ export const useApi = () => {
 
   async function uploadPatch<T = any>(url: string, formData: FormData): Promise<T> {
     try {
-      const result = await $fetch<{ success: boolean, data: T }>(url, {
+      const result = await $fetch<{ success: boolean; data: T }>(url, {
         baseURL,
-        method: 'PATCH',
+        method: "PATCH",
         body: formData,
-        credentials: 'include'
-      })
+        credentials: "include",
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+        },
+      });
       return result.data
     } catch (error: any) {
       const msg = error?.data?.message || 'Cập nhật thất bại'
