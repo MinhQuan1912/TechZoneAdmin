@@ -218,7 +218,24 @@ function handleSend() {
 }
 
 function formatTime(d: string) {
-  return new Date(d).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+  const date = new Date(d)
+  const today = new Date()
+  const isToday = date.toDateString() === today.toDateString()
+
+  if (isToday) {
+    return date.toLocaleTimeString('vi-VN', {
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+
+  return date.toLocaleDateString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 function formatDate(d: string) {
