@@ -1,20 +1,12 @@
 <template>
   <div class="max-w-4xl mx-auto space-y-6">
     <div class="flex items-center gap-4">
-      <UButton
-        color="neutral"
-        variant="ghost"
-        icon="i-heroicons-arrow-left"
-        to="/products"
-      />
+      <UButton color="neutral" variant="ghost" icon="i-heroicons-arrow-left" to="/products" />
       <h1 class="page-title">
         Thêm sản phẩm mới
       </h1>
     </div>
-    <form
-      class="space-y-6"
-      @submit.prevent="handleSubmit"
-    >
+    <form class="space-y-6" @submit.prevent="handleSubmit">
       <UCard>
         <template #header>
           <h3 class="font-semibold">
@@ -22,42 +14,17 @@
           </h3>
         </template>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <UFormField
-            label="Tên sản phẩm *"
-            class="md:col-span-2"
-          >
-            <UInput
-              v-model="form.name"
-              placeholder="iPhone 15 Pro Max"
-              class="w-full"
-              required
-            />
+          <UFormField label="Tên sản phẩm *" class="md:col-span-2">
+            <UInput v-model="form.name" placeholder="iPhone 15 Pro Max" class="w-full" required />
           </UFormField>
           <UFormField label="Nhãn hàng *">
-            <UInput
-              v-model="form.brand"
-              placeholder="Apple, Samsung..."
-              class="w-full"
-              required
-            />
+            <UInput v-model="form.brand" placeholder="Apple, Samsung..." class="w-full" required />
           </UFormField>
           <UFormField label="Danh mục *">
-            <USelect
-              v-model="form.categoryId"
-              :items="categoryOptions"
-              placeholder="Chọn danh mục"
-              class="w-full"
-            />
+            <USelect v-model="form.categoryId" :items="categoryOptions" placeholder="Chọn danh mục" class="w-full" />
           </UFormField>
-          <UFormField
-            label="Mô tả"
-            class="md:col-span-2"
-          >
-            <UTextarea
-              v-model="form.description"
-              :rows="4"
-              class="w-full"
-            />
+          <UFormField label="Mô tả" class="md:col-span-2">
+            <UTextarea v-model="form.description" :rows="4" class="w-full" />
           </UFormField>
           <UFormField label="Trạng thái">
             <div class="flex items-center gap-3">
@@ -80,14 +47,8 @@
         </template>
         <div
           class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-primary-400 transition-colors"
-          @click="productFileInput?.click()"
-          @dragover.prevent
-          @drop.prevent="onProductImageDrop"
-        >
-          <UIcon
-            name="i-heroicons-cloud-arrow-up"
-            class="w-10 h-10 text-gray-300 mx-auto mb-3"
-          />
+          @click="productFileInput?.click()" @dragover.prevent @drop.prevent="onProductImageDrop">
+          <UIcon name="i-heroicons-cloud-arrow-up" class="w-10 h-10 text-gray-300 mx-auto mb-3" />
           <p class="text-sm text-gray-500">
             Kéo thả hoặc <span class="text-primary-600 font-medium">chọn ảnh</span>
           </p>
@@ -95,50 +56,27 @@
             PNG, JPG, WEBP tối đa 5MB - Có thể chọn nhiều ảnh
           </p>
         </div>
-        <input
-          ref="productFileInput"
-          type="file"
-          accept="image/*"
-          multiple
-          class="hidden"
-          @change="onProductImageChange"
-        >
-        <div
-          v-if="productImagePreviews.length > 0"
-          class="mt-4"
-        >
+        <input ref="productFileInput" type="file" accept="image/*" multiple class="hidden"
+          @change="onProductImageChange">
+        <div v-if="productImagePreviews.length > 0" class="mt-4">
           <p class="text-xs text-gray-500 mb-2">
             Click vào ảnh để đặt làm <span class="text-primary-600 font-medium">ảnh chính</span>
             (viền xanh = ảnh chính)
           </p>
           <div class="grid grid-cols-4 md:grid-cols-6 gap-2">
-            <div
-              v-for="(img, idx) in productImagePreviews"
-              :key="idx"
+            <div v-for="(img, idx) in productImagePreviews" :key="idx"
               class="relative group rounded-xl overflow-hidden border-2 cursor-pointer transition-all"
               :class="mainImageIndex === idx ? 'border-primary-500 scale-95' : 'border-transparent hover:border-gray-300'"
-              @click="mainImageIndex = idx"
-            >
-              <img
-                :src="img"
-                class="w-full h-20 object-cover"
-              >
-              <div
-                v-if="mainImageIndex === idx"
-                class="absolute top-1 left-1"
-              >
-                <UBadge
-                  color="primary"
-                  size="xs"
-                >
+              @click="mainImageIndex = idx">
+              <img :src="img" class="w-full h-20 object-cover">
+              <div v-if="mainImageIndex === idx" class="absolute top-1 left-1">
+                <UBadge color="primary" size="xs">
                   Chính
                 </UBadge>
               </div>
-              <button
-                type="button"
+              <button type="button"
                 class="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-                @click.stop="removeProductImage(idx)"
-              >
+                @click.stop="removeProductImage(idx)">
                 ×
               </button>
             </div>
@@ -159,19 +97,10 @@
         <ProductsVariantField v-model="form.variants" />
       </UCard>
       <div class="flex justify-end gap-3">
-        <UButton
-          to="/products"
-          color="neutral"
-          variant="outline"
-        >
+        <UButton to="/products" color="neutral" variant="outline">
           Hủy
         </UButton>
-        <UButton
-          type="submit"
-          color="primary"
-          :loading="loading"
-          icon="i-heroicons-check"
-        >
+        <UButton type="submit" color="primary" :loading="loading" icon="i-heroicons-check">
           Tạo sản phẩm
         </UButton>
       </div>

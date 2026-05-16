@@ -433,11 +433,11 @@ async function saveVariant(variantId: number) {
   savingVariantId.value = variantId
   try {
     await productStore.updateVariant(variantId, {
-      color: f.color || undefined,
-      storage: f.storage || undefined,
-      ram: f.ram || undefined,
-      cpu: f.cpu || undefined,
-      version: f.version || undefined,
+      color: f.color || null,
+      storage: f.storage || null,
+      ram: f.ram || null,
+      cpu: f.cpu || null,
+      version: f.version || null,
       stock: Number(f.stock),
       originalPrice: Number(f.originalPrice),
       salePrice: Number(f.salePrice)
@@ -490,17 +490,28 @@ async function handleSubmit() {
 
     await productStore.update(productId, formData)
     for (const v of newVariants.value) {
-      if (v.originalPrice && v.salePrice) {
-        await productStore.addVariant(productId, {
-          color: v.color || undefined,
-          storage: v.storage || undefined,
-          ram: v.ram || undefined,
-          cpu: v.cpu || undefined,
-          version: v.version || undefined,
+      if (!v.originalPrice || !v.salePrice) continue
+      let createdVariant: { id: number } | null = null
+      try {
+        createdVariant = await productStore.addVariant(productId, {
+          color: v.color || null,
+          storage: v.storage || null,
+          ram: v.ram || null,
+          cpu: v.cpu || null,
+          version: v.version || null,
           originalPrice: Number(v.originalPrice),
           salePrice: Number(v.salePrice),
-          stock: Number(v.stock)
-        })
+          stock: Number(v.stock),
+        }) as { id: number }
+      } catch {
+        continue
+      }
+      if (v.imageFile && createdVariant?.id) {
+        try {
+          await productStore.setVariantImage(createdVariant.id, v.imageFile)
+        } catch {
+          toast.add({ title: 'Lưu ảnh biến thể thất bại', color: 'warning' })
+        }
       }
     }
 
