@@ -1,35 +1,19 @@
 <template>
   <div class="max-w-4xl mx-auto space-y-6">
     <div class="flex items-center gap-4">
-      <UButton
-        color="neutral"
-        variant="ghost"
-        icon="i-heroicons-arrow-left"
-        to="/products"
-      />
+      <UButton color="neutral" variant="ghost" icon="i-heroicons-arrow-left" to="/products" />
       <h1 class="page-title">
         Chỉnh sửa sản phẩm
       </h1>
     </div>
 
-    <div
-      v-if="productStore.loading"
-      class="space-y-4"
-    >
-      <UCard
-        v-for="i in 3"
-        :key="i"
-        class="animate-pulse"
-      >
+    <div v-if="productStore.loading" class="space-y-4">
+      <UCard v-for="i in 3" :key="i" class="animate-pulse">
         <div class="h-32 bg-gray-100 rounded" />
       </UCard>
     </div>
 
-    <form
-      v-else-if="productStore.current"
-      class="space-y-6"
-      @submit.prevent="handleSubmit"
-    >
+    <form v-else-if="productStore.current" class="space-y-6" @submit.prevent="handleSubmit">
       <UCard>
         <template #header>
           <h3 class="font-semibold">
@@ -37,39 +21,17 @@
           </h3>
         </template>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <UFormField
-            label="Tên sản phẩm *"
-            class="md:col-span-2"
-          >
-            <UInput
-              v-model="form.name"
-              class="w-full"
-              required
-            />
+          <UFormField label="Tên sản phẩm *" class="md:col-span-2">
+            <UInput v-model="form.name" class="w-full" required />
           </UFormField>
           <UFormField label="Nhãn hàng *">
-            <UInput
-              v-model="form.brand"
-              class="w-full"
-              required
-            />
+            <UInput v-model="form.brand" class="w-full" required />
           </UFormField>
           <UFormField label="Danh mục *">
-            <USelect
-              v-model="form.categoryId"
-              :items="categoryOptions"
-              class="w-full"
-            />
+            <USelect v-model="form.categoryId" :items="categoryOptions" class="w-full" />
           </UFormField>
-          <UFormField
-            label="Mô tả"
-            class="md:col-span-2"
-          >
-            <UTextarea
-              v-model="form.description"
-              :rows="4"
-              class="w-full"
-            />
+          <UFormField label="Mô tả" class="md:col-span-2">
+            <UTextarea v-model="form.description" :rows="4" class="w-full" />
           </UFormField>
           <UFormField label="Trạng thái">
             <div class="flex items-center gap-3">
@@ -89,54 +51,33 @@
           </div>
         </template>
 
-        <div
-          v-if="existingImages.length > 0"
-          class="mb-4"
-        >
+        <div v-if="existingImages.length > 0" class="mb-4">
           <p class="text-xs font-medium text-gray-600 mb-2">
             Ảnh hiện tại:
           </p>
           <div class="grid grid-cols-4 md:grid-cols-6 gap-2">
-            <div
-              v-for="img in existingImages"
-              :key="img.id"
-              class="relative group rounded-xl overflow-hidden border-2 cursor-pointer transition-all"
-              :class="[
+            <div v-for="img in existingImages" :key="img.id"
+              class="relative group rounded-xl overflow-hidden border-2 cursor-pointer transition-all" :class="[
                 img.isMain ? 'border-primary-500' : 'border-transparent hover:border-gray-300',
                 toDeleteImageIds.includes(img.id) ? 'opacity-40 scale-90' : ''
-              ]"
-              @click="!toDeleteImageIds.includes(img.id) && handleSetMainImage(img.id)"
-            >
-              <img
-                :src="img.url"
-                class="w-full h-20 object-cover"
-              >
+              ]" @click="!toDeleteImageIds.includes(img.id) && handleSetMainImage(img.id)">
+              <img :src="img.url" class="w-full h-20 object-cover">
 
-              <div
-                v-if="img.isMain && !toDeleteImageIds.includes(img.id)"
-                class="absolute top-1 left-1"
-              >
-                <UBadge
-                  color="primary"
-                  size="xs"
-                >
+              <div v-if="img.isMain && !toDeleteImageIds.includes(img.id)" class="absolute top-1 left-1">
+                <UBadge color="primary" size="xs">
                   Chính
                 </UBadge>
               </div>
 
-              <div
-                v-if="toDeleteImageIds.includes(img.id)"
-                class="absolute inset-0 flex items-center justify-center bg-red-500/20"
-              >
+              <div v-if="toDeleteImageIds.includes(img.id)"
+                class="absolute inset-0 flex items-center justify-center bg-red-500/20">
                 <span class="text-xs font-bold text-red-600 bg-white/90 px-2 py-0.5 rounded">Xóa</span>
               </div>
 
-              <button
-                type="button"
+              <button type="button"
                 class="absolute top-1 right-1 w-5 h-5 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 :class="toDeleteImageIds.includes(img.id) ? 'bg-gray-500' : 'bg-red-500'"
-                @click.stop="toggleDeleteImage(img.id)"
-              >
+                @click.stop="toggleDeleteImage(img.id)">
                 {{ toDeleteImageIds.includes(img.id) ? '↩' : '×' }}
               </button>
             </div>
@@ -148,62 +89,33 @@
 
         <div
           class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center cursor-pointer hover:border-primary-400 transition-colors"
-          @click="newImageFileInput?.click()"
-          @dragover.prevent
-          @drop.prevent="e => addNewImages(Array.from(e.dataTransfer?.files || []))"
-        >
-          <UIcon
-            name="i-heroicons-plus"
-            class="w-6 h-6 text-gray-300 mx-auto mb-1"
-          />
+          @click="newImageFileInput?.click()" @dragover.prevent
+          @drop.prevent="e => addNewImages(Array.from(e.dataTransfer?.files || []))">
+          <UIcon name="i-heroicons-plus" class="w-6 h-6 text-gray-300 mx-auto mb-1" />
           <p class="text-sm text-gray-500">
             Thêm ảnh mới
           </p>
         </div>
-        <input
-          ref="newImageFileInput"
-          type="file"
-          accept="image/*"
-          multiple
-          class="hidden"
-          @change="onNewImageChange"
-        >
+        <input ref="newImageFileInput" type="file" accept="image/*" multiple class="hidden" @change="onNewImageChange">
 
-        <div
-          v-if="newImagePreviews.length > 0"
-          class="mt-3"
-        >
+        <div v-if="newImagePreviews.length > 0" class="mt-3">
           <p class="text-xs text-gray-500 mb-2">
             Ảnh mới - click để chọn ảnh chính (trong batch upload này)
           </p>
           <div class="grid grid-cols-4 md:grid-cols-6 gap-2">
-            <div
-              v-for="(img, idx) in newImagePreviews"
-              :key="idx"
+            <div v-for="(img, idx) in newImagePreviews" :key="idx"
               class="relative group rounded-xl overflow-hidden border-2 cursor-pointer transition-all"
               :class="newMainIndex === idx ? 'border-primary-500' : 'border-transparent hover:border-gray-300'"
-              @click="newMainIndex = idx"
-            >
-              <img
-                :src="img"
-                class="w-full h-20 object-cover"
-              >
-              <div
-                v-if="newMainIndex === idx"
-                class="absolute top-1 left-1"
-              >
-                <UBadge
-                  color="primary"
-                  size="xs"
-                >
+              @click="newMainIndex = idx">
+              <img :src="img" class="w-full h-20 object-cover">
+              <div v-if="newMainIndex === idx" class="absolute top-1 left-1">
+                <UBadge color="primary" size="xs">
                   Chính
                 </UBadge>
               </div>
-              <button
-                type="button"
+              <button type="button"
                 class="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100"
-                @click.stop="removeNewImage(idx)"
-              >
+                @click.stop="removeNewImage(idx)">
                 ×
               </button>
             </div>
@@ -219,150 +131,77 @@
                 Biến thể
               </h3>
             </div>
-            <UBadge
-              color="neutral"
-              variant="soft"
-            >
+            <UBadge color="neutral" variant="soft">
               {{ productStore.current.variants.length }} biến thể
             </UBadge>
           </div>
         </template>
 
         <div class="space-y-3">
-          <div
-            v-for="variant in productStore.current.variants"
-            :key="variant.id"
-            class="border border-gray-200 rounded-xl overflow-hidden"
-          >
-            <div
-              class="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer select-none"
-              @click="toggleExpand(variant.id)"
-            >
+          <div v-for="variant in productStore.current.variants" :key="variant.id"
+            class="border border-gray-200 rounded-xl overflow-hidden">
+            <div class="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer select-none"
+              @click="toggleExpand(variant.id)">
               <div class="flex items-center gap-3">
-                <UIcon
-                  :name="expanded.includes(variant.id) ? 'i-heroicons-chevron-down' : 'i-heroicons-chevron-right'"
-                  class="w-4 h-4 text-gray-400"
-                />
+                <UIcon :name="expanded.includes(variant.id) ? 'i-heroicons-chevron-down' : 'i-heroicons-chevron-right'"
+                  class="w-4 h-4 text-gray-400" />
                 <div class="flex flex-wrap gap-1.5">
-                  <UBadge
-                    v-if="variant.color"
-                    color="neutral"
-                    variant="soft"
-                    size="sm"
-                  >
-                    🎨 {{ variant.color }}
+                  <UBadge v-if="variant.color" color="neutral" variant="soft" size="sm">
+                    Màu: {{ variant.color }}
                   </UBadge>
-                  <UBadge
-                    v-if="variant.storage"
-                    color="neutral"
-                    variant="soft"
-                    size="sm"
-                  >
-                    💾 {{ variant.storage }}
+                  <UBadge v-if="variant.storage" color="neutral" variant="soft" size="sm">
+                    Dung lượng: {{ variant.storage }}
                   </UBadge>
-                  <UBadge
-                    v-if="variant.ram"
-                    color="neutral"
-                    variant="soft"
-                    size="sm"
-                  >
-                    🧠 {{ variant.ram }}
+                  <UBadge v-if="variant.ram" color="neutral" variant="soft" size="sm">
+                    Ram: {{ variant.ram }}
+                  </UBadge>
+                  <UBadge v-if="variant.version" color="neutral" variant="soft" size="sm">
+                    Phiên bản: {{ variant.version }}
                   </UBadge>
                 </div>
               </div>
               <div class="flex items-center gap-3">
-                <img
-                  v-if="variant.imageUrl"
-                  :src="variant.imageUrl"
-                  class="w-8 h-8 rounded-lg object-cover border border-primary-200"
-                  :title="`Ảnh màu ${variant.color}`"
-                >
-                <div
-                  v-else-if="variant.color"
+                <img v-if="variant.imageUrl" :src="variant.imageUrl"
+                  class="w-8 h-8 rounded-lg object-cover border border-primary-200" :title="`Ảnh màu ${variant.color}`">
+                <div v-else-if="variant.color"
                   class="w-8 h-8 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center"
-                  title="Chưa có ảnh màu"
-                >
-                  <UIcon
-                    name="i-heroicons-photo"
-                    class="w-4 h-4 text-gray-300"
-                  />
+                  title="Chưa có ảnh màu">
+                  <UIcon name="i-heroicons-photo" class="w-4 h-4 text-gray-300" />
                 </div>
                 <span class="text-sm text-green-600 font-medium">
                   {{ formatCurrency(variant.salePrice) }}
                 </span>
                 <span class="text-xs text-gray-400">Kho: {{ variant.stock }}</span>
-                <UButton
-                  size="xs"
-                  color="error"
-                  variant="ghost"
-                  icon="i-heroicons-trash"
-                  @click.stop="openDeleteVariant(variant.id)"
-                />
+                <UButton size="xs" color="error" variant="ghost" icon="i-heroicons-trash"
+                  @click.stop="openDeleteVariant(variant.id)" />
               </div>
             </div>
 
-            <div
-              v-if="expanded.includes(variant.id)"
-              class="px-4 py-4 space-y-4"
-            >
+            <div v-if="expanded.includes(variant.id)" class="px-4 py-4 space-y-4">
               <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <UFormField label="Màu sắc">
-                  <UInput
-                    v-model="variantForms[variant.id].color"
-                    placeholder="Đen Titan"
-                    class="w-full"
-                  />
+                  <UInput v-model="variantForms[variant.id].color" placeholder="Đen Titan" class="w-full" />
                 </UFormField>
                 <UFormField label="Dung lượng">
-                  <UInput
-                    v-model="variantForms[variant.id].storage"
-                    placeholder="256GB"
-                    class="w-full"
-                  />
+                  <UInput v-model="variantForms[variant.id].storage" placeholder="256GB" class="w-full" />
                 </UFormField>
                 <UFormField label="RAM">
-                  <UInput
-                    v-model="variantForms[variant.id].ram"
-                    placeholder="8GB"
-                    class="w-full"
-                  />
+                  <UInput v-model="variantForms[variant.id].ram" placeholder="8GB" class="w-full" />
                 </UFormField>
                 <UFormField label="CPU">
-                  <UInput
-                    v-model="variantForms[variant.id].cpu"
-                    placeholder="M3"
-                    class="w-full"
-                  />
+                  <UInput v-model="variantForms[variant.id].cpu" placeholder="M3" class="w-full" />
                 </UFormField>
                 <UFormField label="Tồn kho *">
-                  <UInput
-                    v-model="variantForms[variant.id].stock"
-                    type="number"
-                    :min="0"
-                    class="w-full"
-                    :class="Number(variantForms[variant.id].stock) === 0 ? 'ring-2 ring-red-400' : ''"
-                  />
+                  <UInput v-model="variantForms[variant.id].stock" type="number" :min="0" class="w-full"
+                    :class="Number(variantForms[variant.id].stock) === 0 ? 'ring-2 ring-red-400' : ''" />
                 </UFormField>
                 <UFormField label="Giá gốc (đ) *">
-                  <UInput
-                    v-model="variantForms[variant.id].originalPrice"
-                    type="number"
-                    :min="0"
-                    class="w-full"
-                  />
+                  <UInput v-model="variantForms[variant.id].originalPrice" type="number" :min="0" class="w-full" />
                 </UFormField>
                 <UFormField label="Giá bán (đ) *">
                   <div>
-                    <UInput
-                      v-model="variantForms[variant.id].salePrice"
-                      type="number"
-                      :min="0"
-                      class="w-full"
-                    />
-                    <p
-                      v-if="getDiscount(variant.id) > 0"
-                      class="text-xs text-green-600 mt-1"
-                    >
+                    <UInput v-model="variantForms[variant.id].salePrice" type="number" :min="0" class="w-full" />
+                    <p v-if="getDiscount(variant.id) > 0" class="text-xs text-green-600 mt-1">
                       Giảm {{ getDiscount(variant.id) }}%
                     </p>
                   </div>
@@ -378,80 +217,44 @@
 
                 <div class="flex items-start gap-4">
                   <div class="shrink-0">
-                    <div
-                      v-if="variant.imageUrl"
-                      class="relative group w-28 h-28 rounded-xl overflow-hidden border-2 border-primary-200"
-                    >
-                      <img
-                        :src="variant.imageUrl"
-                        class="w-full h-full object-cover"
-                      >
+                    <div v-if="variant.imageUrl"
+                      class="relative group w-28 h-28 rounded-xl overflow-hidden border-2 border-primary-200">
+                      <img :src="variant.imageUrl" class="w-full h-full object-cover">
                       <div
-                        class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center gap-2 transition-opacity"
-                      >
-                        <UButton
-                          size="xs"
-                          variant="solid"
-                          icon="i-heroicons-arrow-path"
-                          @click="triggerVariantImageInput(variant.id)"
-                        >
+                        class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center gap-2 transition-opacity">
+                        <UButton size="xs" variant="solid" icon="i-heroicons-arrow-path"
+                          @click="triggerVariantImageInput(variant.id)">
                           Đổi ảnh
                         </UButton>
-                        <UButton
-                          size="xs"
-                          color="error"
-                          variant="solid"
-                          icon="i-heroicons-trash"
+                        <UButton size="xs" color="error" variant="solid" icon="i-heroicons-trash"
                           :loading="removingVariantImageId === variant.id"
-                          @click="handleRemoveVariantImage(variant.id)"
-                        >
+                          @click="handleRemoveVariantImage(variant.id)">
                           Xóa
                         </UButton>
                       </div>
                     </div>
-                    <div
-                      v-else
+                    <div v-else
                       class="w-28 h-28 rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-primary-400 hover:bg-primary-50 transition-colors"
-                      @click="triggerVariantImageInput(variant.id)"
-                    >
-                      <UIcon
-                        name="i-heroicons-plus"
-                        class="w-6 h-6 text-gray-300 mb-1"
-                      />
+                      @click="triggerVariantImageInput(variant.id)">
+                      <UIcon name="i-heroicons-plus" class="w-6 h-6 text-gray-300 mb-1" />
                       <span class="text-xs text-gray-400 text-center px-2">Upload ảnh màu</span>
                     </div>
                   </div>
                   <div class="text-xs text-gray-400 space-y-1">
-                    <p
-                      v-if="variant.imageUrl"
-                      class="text-green-600"
-                    >
+                    <p v-if="variant.imageUrl" class="text-green-600">
                       Đã có ảnh màu
                     </p>
-                    <p
-                      v-else
-                      class="text-orange-500"
-                    >
+                    <p v-else class="text-orange-500">
                       Chưa có ảnh
                     </p>
                   </div>
                 </div>
-                <input
-                  :ref="el => { if (el) variantImageInputs[variant.id] = el as HTMLInputElement }"
-                  type="file"
-                  accept="image/*"
-                  class="hidden"
-                  @change="e => handleVariantImageChange(e, variant.id)"
-                >
+                <input :ref="el => { if (el) variantImageInputs[variant.id] = el as HTMLInputElement }" type="file"
+                  accept="image/*" class="hidden" @change="e => handleVariantImageChange(e, variant.id)">
               </div>
               <div class="flex justify-end gap-2 pt-2 border-t border-gray-100">
-                <UButton
-                  size="sm"
-                  color="primary"
-                  :loading="savingVariantId === variant.id"
-                  icon="i-heroicons-check"
-                  @click="saveVariant(variant.id)"
-                >
+                <UButton size="sm" color="primary" :loading="savingVariantId === variant.id" icon="i-heroicons-check"
+                  @click="saveVariant(variant.id)">
                   Lưu biến thể
                 </UButton>
               </div>
@@ -464,47 +267,26 @@
             <h4 class="text-sm font-medium text-gray-700">
               Thêm biến thể mới
             </h4>
-            <UButton
-              size="xs"
-              color="neutral"
-              variant="ghost"
+            <UButton size="xs" color="neutral" variant="ghost"
               :icon="showNewVariants ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'"
-              @click="showNewVariants = !showNewVariants"
-            />
+              @click="showNewVariants = !showNewVariants" />
           </div>
-          <ProductsVariantField
-            v-if="showNewVariants"
-            v-model="newVariants"
-          />
+          <ProductsVariantField v-if="showNewVariants" v-model="newVariants" />
         </div>
       </UCard>
 
       <div class="flex justify-end gap-3 pb-6">
-        <UButton
-          to="/products"
-          color="neutral"
-          variant="outline"
-        >
+        <UButton to="/products" color="neutral" variant="outline">
           Hủy
         </UButton>
-        <UButton
-          type="submit"
-          color="primary"
-          :loading="loading"
-          icon="i-heroicons-check"
-        >
+        <UButton type="submit" color="primary" :loading="loading" icon="i-heroicons-check">
           Lưu thông tin sản phẩm
         </UButton>
       </div>
     </form>
 
-    <CommonAppConfirmModal
-      v-model:open="variantDeleteOpen"
-      title="Xóa biến thể"
-      message="Xóa biến thể này? Ảnh màu cũng sẽ bị xóa."
-      :loading="variantDeleting"
-      @confirm="doDeleteVariant"
-    />
+    <CommonAppConfirmModal v-model:open="variantDeleteOpen" title="Xóa biến thể"
+      message="Xóa biến thể này? Ảnh màu cũng sẽ bị xóa." :loading="variantDeleting" @confirm="doDeleteVariant" />
   </div>
 </template>
 
