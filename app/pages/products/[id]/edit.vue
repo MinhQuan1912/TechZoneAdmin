@@ -242,14 +242,6 @@
                       <span class="text-xs text-gray-400 text-center px-2">Upload ảnh màu</span>
                     </div>
                   </div>
-                  <div class="text-xs text-gray-400 space-y-1">
-                    <p v-if="variant.imageUrl" class="text-green-600">
-                      Đã có ảnh màu
-                    </p>
-                    <p v-else class="text-orange-500">
-                      Chưa có ảnh
-                    </p>
-                  </div>
                 </div>
                 <input :ref="el => { if (el) variantImageInputs[variant.id] = el as HTMLInputElement }" type="file"
                   accept="image/*" class="hidden" @change="e => handleVariantImageChange(e, variant.id)">
