@@ -215,7 +215,6 @@
                 <p class="text-sm font-medium text-gray-700 mb-3">
                   Ảnh cho màu
                   <span class="text-primary-600">{{ variant.color || 'này' }}</span>
-                  <span class="text-xs text-gray-400 ml-2">(chỉ 1 ảnh)</span>
                 </p>
 
                 <div class="flex items-start gap-4">
