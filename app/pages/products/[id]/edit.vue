@@ -191,6 +191,9 @@
                 <UFormField label="CPU">
                   <UInput v-model="variantForms[variant.id].cpu" placeholder="M3" class="w-full" />
                 </UFormField>
+                <UFormField label="Phiên bản">
+                  <UInput v-model="variantForms[variant.id].version" class="w-full" />
+                </UFormField>
                 <UFormField label="Tồn kho *">
                   <UInput v-model="variantForms[variant.id].stock" type="number" :min="0" class="w-full"
                     :class="Number(variantForms[variant.id].stock) === 0 ? 'ring-2 ring-red-400' : ''" />
