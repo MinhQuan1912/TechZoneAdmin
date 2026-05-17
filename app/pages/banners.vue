@@ -353,6 +353,7 @@ async function saveBanner() {
       await api(`/banners/${editing.value.id}/toggle`, {
         method: 'PATCH'
       })
+      toast.add({ title: 'Đã cập nhật', color: 'success' })
     } else {
       const fd = new FormData()
       fd.append('productId', formData.productId)
@@ -362,8 +363,9 @@ async function saveBanner() {
       }
 
       await upload('/banners', fd)
+      toast.add({ title: 'Đã lưu banner', color: 'success' })
     }
-    toast.add({ title: 'Đã lưu banner', color: 'success' })
+    
     closeForm()
     await loadBanners()
   } finally {
