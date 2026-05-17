@@ -27,12 +27,13 @@ export const useAdminChat = () => {
     if (socket?.connected) return
 
     socket = io(
-      `${useRuntimeConfig().public.apiBase.replace('/api', '')}/chat`,
+      `${useRuntimeConfig().public.apiBase.replace("/api", "")}/chat`,
       {
         withCredentials: true,
-        transports: ['websocket']
-      }
-    )
+        transports: ["websocket"],
+        auth: { type: "admin" },
+      },
+    );
 
     socket.on('connect', () => {
       isConnected.value = true
