@@ -1,30 +1,16 @@
 <template>
   <div class="space-y-4">
     <div class="flex items-center justify-between">
-      <UButton
-        icon="i-heroicons-plus"
-        color="primary"
-        @click="openForm"
-      >
+      <UButton icon="i-heroicons-plus" color="primary" @click="openForm">
         Thêm Banner
       </UButton>
     </div>
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <UCard
-        v-for="banner in banners"
-        :key="banner.id"
-        class="overflow-hidden"
-      >
+      <UCard v-for="banner in banners" :key="banner.id" class="overflow-hidden">
         <div class="relative">
-          <img
-            :src="banner.imageUrl"
-            class="h-40 w-full rounded-lg object-cover"
-          >
-          <UBadge
-            :color="banner.isActive ? 'success' : 'neutral'"
-            class="absolute right-2 top-2"
-          >
+          <img :src="banner.imageUrl" class="h-40 w-full rounded-lg object-cover">
+          <UBadge :color="banner.isActive ? 'success' : 'neutral'" class="absolute right-2 top-2">
             {{ banner.isActive ? 'Hiển thị' : 'Ẩn' }}
           </UBadge>
         </div>
@@ -38,20 +24,10 @@
           </p>
         </div>
         <div class="mt-3 flex gap-2">
-          <UButton
-            size="xs"
-            color="neutral"
-            variant="outline"
-            icon="i-heroicons-pencil"
-            @click="openEditForm(banner)"
-          />
-          <UButton
-            size="xs"
-            color="error"
-            variant="outline"
-            icon="i-heroicons-trash"
-            @click="deleteBanner(banner.id)"
-          />
+          <UButton size="xs" color="neutral" variant="outline" icon="i-heroicons-pencil"
+            @click="openEditForm(banner)" />
+          <UButton size="xs" color="error" variant="outline" icon="i-heroicons-trash"
+            @click="deleteBanner(banner.id)" />
         </div>
       </UCard>
     </div>
@@ -65,97 +41,47 @@
           </template>
 
           <div class="space-y-4">
-            <div
-              ref="searchContainer"
-              class="relative"
-            >
+            <div ref="searchContainer" class="relative">
               <UFormField label="Sản phẩm">
                 <div class="relative">
                   <div v-if="!isEditing">
-                    <UInput
-                      v-model="searchText"
-                      placeholder="Nhập tên sản phẩm..."
-                      icon="i-heroicons-magnifying-glass"
-                      class="w-full"
-                      autocomplete="off"
-                      @input="onInput"
-                      @focus="onFocus"
-                      @keydown.down.prevent="moveDown"
-                      @keydown.up.prevent="moveUp"
-                      @keydown.enter.prevent="selectHighlighted"
-                      @keydown.escape="closeDropdown"
-                    >
-                      <template
-                        v-if="selectedProduct"
-                        #trailing
-                      >
-                        <UButton
-                          color="neutral"
-                          variant="ghost"
-                          icon="i-heroicons-x-mark"
-                          size="xs"
-                          @click="clearSelection"
-                        />
+                    <UInput v-model="searchText" placeholder="Nhập tên sản phẩm..." icon="i-heroicons-magnifying-glass"
+                      class="w-full" autocomplete="off" @input="onInput" @focus="onFocus"
+                      @keydown.down.prevent="moveDown" @keydown.up.prevent="moveUp"
+                      @keydown.enter.prevent="selectHighlighted" @keydown.escape="closeDropdown">
+                      <template v-if="selectedProduct" #trailing>
+                        <UButton color="neutral" variant="ghost" icon="i-heroicons-x-mark" size="xs"
+                          @click="clearSelection" />
                       </template>
                     </UInput>
                   </div>
-                  <Transition
-                    enter-active-class="transition duration-150 ease-out"
-                    enter-from-class="opacity-0 -translate-y-1"
-                    enter-to-class="opacity-100 translate-y-0"
-                    leave-active-class="transition duration-100 ease-in"
-                    leave-from-class="opacity-100 translate-y-0"
-                    leave-to-class="opacity-0 -translate-y-1"
-                  >
-                    <div
-                      v-if="dropdownOpen && searchText.trim().length >= 1"
-                      class="absolute z-100 mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-xl"
-                    >
-                      <div
-                        v-if="searching"
-                        class="flex items-center gap-3 px-4 py-3 text-sm text-gray-500"
-                      >
-                        <div class="h-4 w-4 animate-spin rounded-full border-2 border-primary-500 border-t-transparent" />
+                  <Transition enter-active-class="transition duration-150 ease-out"
+                    enter-from-class="opacity-0 -translate-y-1" enter-to-class="opacity-100 translate-y-0"
+                    leave-active-class="transition duration-100 ease-in" leave-from-class="opacity-100 translate-y-0"
+                    leave-to-class="opacity-0 -translate-y-1">
+                    <div v-if="dropdownOpen && searchText.trim().length >= 1"
+                      class="absolute z-100 mt-1 w-full rounded-xl border border-gray-200 bg-white shadow-xl">
+                      <div v-if="searching" class="flex items-center gap-3 px-4 py-3 text-sm text-gray-500">
+                        <div
+                          class="h-4 w-4 animate-spin rounded-full border-2 border-primary-500 border-t-transparent" />
                         Đang tìm kiếm...
                       </div>
 
-                      <div
-                        v-else-if="suggestions.length === 0"
-                        class="px-4 py-6 text-center text-sm text-gray-400"
-                      >
-                        <UIcon
-                          name="i-heroicons-magnifying-glass"
-                          class="mx-auto mb-2 h-8 w-8 text-gray-300"
-                        />
+                      <div v-else-if="suggestions.length === 0" class="px-4 py-6 text-center text-sm text-gray-400">
+                        <UIcon name="i-heroicons-magnifying-glass" class="mx-auto mb-2 h-8 w-8 text-gray-300" />
                         Không tìm thấy sản phẩm nào
                       </div>
 
-                      <ul
-                        v-else
-                        class="max-h-72 overflow-y-auto py-1"
-                      >
-                        <li
-                          v-for="(product, idx) in suggestions"
-                          :key="product.id"
+                      <ul v-else class="max-h-72 overflow-y-auto py-1">
+                        <li v-for="(product, idx) in suggestions" :key="product.id"
                           class="flex cursor-pointer items-center gap-3 px-3 py-2.5 transition-colors"
                           :class="highlightedIndex === idx ? 'bg-primary-50' : 'hover:bg-gray-50'"
-                          @click="selectProduct(product)"
-                          @mouseenter="highlightedIndex = idx"
-                        >
-                          <img
-                            v-if="product.images?.[0]?.url"
-                            :src="product.images[0].url"
-                            :alt="product.name"
-                            class="h-10 w-10 shrink-0 rounded-lg object-cover"
-                          >
-                          <div
-                            v-else
-                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100"
-                          >
-                            <UIcon
-                              name="i-heroicons-photo"
-                              class="h-5 w-5 text-gray-400"
-                            />
+                          @click="selectProduct(product)" @mouseenter="highlightedIndex = idx">
+                          <img v-if="product.images?.[0]?.url" :src="product.images[0].url" :alt="product.name"
+                            class="h-10 w-10 shrink-0 rounded-lg object-cover">
+                          <div v-else
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100">
+                            <UIcon name="i-heroicons-photo" class="h-5 w-5 text-gray-400" />
                           </div>
 
                           <div class="min-w-0 flex-1">
@@ -175,24 +101,12 @@
                 </div>
               </UFormField>
 
-              <div
-                v-if="selectedProduct"
-                class="mt-3 flex items-center gap-3 rounded-xl border border-primary-100 bg-primary-50 p-3"
-              >
-                <img
-                  v-if="selectedProduct.images?.[0]?.url"
-                  :src="selectedProduct.images[0].url"
-                  :alt="selectedProduct.name"
-                  class="h-12 w-12 shrink-0 rounded-lg object-cover"
-                >
-                <div
-                  v-else
-                  class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white"
-                >
-                  <UIcon
-                    name="i-heroicons-photo"
-                    class="h-5 w-5 text-gray-400"
-                  />
+              <div v-if="selectedProduct"
+                class="mt-3 flex items-center gap-3 rounded-xl border border-primary-100 bg-primary-50 p-3">
+                <img v-if="selectedProduct.images?.[0]?.url" :src="selectedProduct.images[0].url"
+                  :alt="selectedProduct.name" class="h-12 w-12 shrink-0 rounded-lg object-cover">
+                <div v-else class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-white">
+                  <UIcon name="i-heroicons-photo" class="h-5 w-5 text-gray-400" />
                 </div>
                 <div class="min-w-0 flex-1">
                   <p class="truncate text-sm font-medium text-gray-900">
@@ -206,43 +120,25 @@
             </div>
 
             <UFormField label="Ảnh banner">
-              <div
-                v-if="!previewUrl"
+              <div v-if="!previewUrl"
                 class="cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-6 text-center hover:border-primary-400"
-                @click="bannerFileInput?.click()"
-              >
-                <UIcon
-                  name="i-heroicons-photo"
-                  class="mx-auto mb-2 h-8 w-8 text-gray-400"
-                />
+                @click="bannerFileInput?.click()">
+                <UIcon name="i-heroicons-photo" class="mx-auto mb-2 h-8 w-8 text-gray-400" />
                 <p class="text-sm text-gray-500">
                   Chọn ảnh banner
                 </p>
               </div>
-              <div
-                v-else
-                class="relative"
-              >
-                <img
-                  :src="previewUrl"
-                  class="h-32 w-full rounded object-cover"
-                >
+              <div v-else class="relative">
+                <img :src="previewUrl" class="h-32 w-full rounded object-cover">
                 <button
                   class="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-600 text-white hover:bg-white hover:text-red-600"
-                  @click="removeImage"
-                >
+                  @click="removeImage">
                   <div class="-translate-y-0.5">
                     x
                   </div>
                 </button>
               </div>
-              <input
-                ref="bannerFileInput"
-                type="file"
-                accept="image/*"
-                class="hidden"
-                @change="onBannerFileChange"
-              >
+              <input ref="bannerFileInput" type="file" accept="image/*" class="hidden" @change="onBannerFileChange">
             </UFormField>
             <UFormField label="Trạng thái">
               <div class="flex items-center gap-3">
@@ -254,18 +150,10 @@
 
           <template #footer>
             <div class="flex justify-end gap-3">
-              <UButton
-                color="neutral"
-                variant="outline"
-                @click="closeForm"
-              >
+              <UButton color="neutral" variant="outline" @click="closeForm">
                 Hủy
               </UButton>
-              <UButton
-                color="primary"
-                :loading="saving"
-                @click="saveBanner"
-              >
+              <UButton color="primary" :loading="saving" @click="saveBanner">
                 {{ editing ? 'Cập nhật' : 'Tạo banner' }}
               </UButton>
             </div>
@@ -461,12 +349,20 @@ async function saveBanner() {
 
   saving.value = true
   try {
-    const fd = new FormData()
-    fd.append('productId', formData.productId)
-    fd.append('isActive', String(formData.isActive))
-    if (selectedFile.value) fd.append('image', selectedFile.value)
+    if (editing.value && !selectedFile.value) {
+      await api(`/banners/${editing.value.id}/toggle`, {
+        method: 'PATCH'
+      })
+    } else {
+      const fd = new FormData()
+      fd.append('productId', formData.productId)
+      fd.append('isActive', String(formData.isActive))
+      if (selectedFile.value) {
+        fd.append('image', selectedFile.value)
+      }
 
-    await upload('/banners', fd)
+      await upload('/banners', fd)
+    }
     toast.add({ title: 'Đã lưu banner', color: 'success' })
     closeForm()
     await loadBanners()
