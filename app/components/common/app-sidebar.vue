@@ -47,14 +47,14 @@ const authStore = useAuthStore()
 
 const navItems = [
   { to: '/', label: 'Dashboard', icon: 'i-heroicons-home' },
-  { to: '/products', label: 'Sản phẩm', icon: 'i-heroicons-cube' },
-  { to: '/categories', label: 'Danh mục', icon: 'i-heroicons-tag' },
-  { to: '/orders', label: 'Đơn hàng', icon: 'i-heroicons-shopping-cart' },
-  { to: '/users', label: 'Người dùng', icon: 'i-heroicons-users' },
-  { to: '/coupons', label: 'Mã giảm giá', icon: 'i-heroicons-ticket' },
-  { to: '/reviews', label: 'Đánh giá', icon: 'i-heroicons-star' },
-  { to: '/banners', label: 'Banner', icon: 'i-heroicons-photo' },
-  { to: '/chat', label: 'Chat', icon: 'i-heroicons-chat-bubble-left-right' }
+  { to: '/products', label: 'Quản lý sản phẩm', icon: 'i-heroicons-cube' },
+  { to: '/categories', label: 'Quản lý danh mục', icon: 'i-heroicons-tag' },
+  { to: '/orders', label: 'Quản lý đơn hàng', icon: 'i-heroicons-shopping-cart' },
+  { to: '/users', label: 'Quản lý người dùng', icon: 'i-heroicons-users' },
+  { to: '/coupons', label: 'Quản lý mã giảm giá', icon: 'i-heroicons-ticket' },
+  { to: '/reviews', label: 'Quản lý đánh giá', icon: 'i-heroicons-star' },
+  { to: '/banners', label: 'Quản lý banner', icon: 'i-heroicons-photo' },
+  { to: '/chat', label: 'Chat với người dùng', icon: 'i-heroicons-chat-bubble-left-right' }
 ]
 
 const isActive = (to: string) => {
