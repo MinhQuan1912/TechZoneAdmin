@@ -1,21 +1,13 @@
 <template>
   <div class="max-w-4xl mx-auto space-y-6">
     <div class="flex items-center gap-4">
-      <UButton
-        color="neutral"
-        variant="ghost"
-        icon="i-heroicons-arrow-left"
-        to="/orders"
-      />
+      <UButton color="neutral" variant="ghost" icon="i-heroicons-arrow-left" to="/orders" />
       <h1 class="page-title">
         Chi tiết đơn hàng
       </h1>
     </div>
 
-    <div
-      v-if="store.loading"
-      class="text-center py-20"
-    >
+    <div v-if="store.loading" class="text-center py-20">
       <div class="animate-spin w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full mx-auto" />
     </div>
 
@@ -27,10 +19,7 @@
               <h3 class="font-semibold">
                 {{ store.current.code }}
               </h3>
-              <UBadge
-                :color="(statusColors[store.current.status] as any)"
-                variant="soft"
-              >
+              <UBadge :color="(statusColors[store.current.status] as any)" variant="soft">
                 {{ statusLabels[store.current.status] }}
               </UBadge>
             </div>
@@ -49,10 +38,7 @@
                 <p class="text-gray-500">
                   Thanh toán
                 </p>
-                <UBadge
-                  :color="store.current.isPaid ? 'success' : 'warning'"
-                  variant="soft"
-                >
+                <UBadge :color="store.current.isPaid ? 'success' : 'warning'" variant="soft">
                   {{ store.current.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán' }}
                 </UBadge>
               </div>
@@ -94,18 +80,19 @@
                 <span class="text-gray-500">Tạm tính</span>
                 <span>{{ formatCurrency(store.current.totalAmount) }}</span>
               </div>
-              <div
-                v-if="store.current.discountAmount > 0"
-                class="flex justify-between text-red-500"
-              >
-                <span>Giảm giá</span>
+              <div v-if="store.current.discountAmount > 0" class="flex justify-between text-red-500">
+                <span class="flex items-center gap-1.5">
+                  Giảm giá
+                  <span v-if="store.current.coupon"
+                    class="font-mono text-xs bg-red-50 border border-red-200 text-red-500 px-1.5 py-0.5 rounded">
+                    {{ store.current.coupon.code }}
+                  </span>
+                </span>
                 <span>-{{ formatCurrency(store.current.discountAmount) }}</span>
               </div>
-              <div
-                v-if="store.current.coupon"
-                class="text-xs text-gray-400 pl-2"
-              >
-                Mã: {{ store.current.coupon.code }}
+              <div class="flex justify-between text-gray-500">
+                <span>Phí vận chuyển</span>
+                <span class="text-green-600 font-medium">Miễn phí</span>
               </div>
               <USeparator />
               <div class="flex justify-between font-semibold text-base">
@@ -122,18 +109,9 @@
               </h3>
             </template>
             <div class="space-y-3">
-              <USelect
-                v-model="newStatus"
-                :items="availableStatuses"
-                class="w-full"
-              />
-              <UButton
-                color="primary"
-                class="w-full"
-                :loading="updating"
-                :disabled="!newStatus"
-                @click="doUpdateStatus"
-              >
+              <USelect v-model="newStatus" :items="availableStatuses" class="w-full" />
+              <UButton color="primary" class="w-full" :loading="updating" :disabled="!newStatus"
+                @click="doUpdateStatus">
                 Cập nhật
               </UButton>
             </div>
@@ -147,17 +125,10 @@
           </h3>
         </template>
         <div class="space-y-3">
-          <div
-            v-for="item in store.current.items"
-            :key="item.id"
-            class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50"
-          >
+          <div v-for="item in store.current.items" :key="item.id"
+            class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50">
             <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-              <img
-                :src="item.variant?.imageUrl"
-                :alt="item.product?.name"
-                class="w-full h-full object-cover"
-              >
+              <img :src="item.variant?.imageUrl" :alt="item.product?.name" class="w-full h-full object-cover">
             </div>
             <div class="flex-1">
               <p class="font-medium text-sm">

@@ -523,7 +523,7 @@ async function handleSubmit() {
 }
 
 onMounted(async () => {
-  await catStore.fetchAll()
+  if (catStore.items.length === 0) await catStore.fetchAll()
   await productStore.fetchOne(productId)
   if (productStore.current) {
     const p = productStore.current

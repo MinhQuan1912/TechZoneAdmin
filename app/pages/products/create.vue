@@ -211,7 +211,9 @@ async function handleSubmit() {
   }
 }
 
-onMounted(() => catStore.fetchAll())
+onMounted(() => {
+  if (catStore.items.length === 0) catStore.fetchAll()
+})
 
 onUnmounted(() => {
   productImagePreviews.value.forEach(url => URL.revokeObjectURL(url))
