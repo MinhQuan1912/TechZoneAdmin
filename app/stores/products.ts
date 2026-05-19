@@ -28,12 +28,18 @@ export const useProductStore = defineStore("products", () => {
         limit: limit.value,
       };
       if (filter.value.search) query.search = filter.value.search;
-      if (filter.value.categoryId) query.categoryId = filter.value.categoryId;
+
+      if (filter.value.categoryId && filter.value.categoryId !== "__all__")
+        query.categoryId = filter.value.categoryId;
+
       if (filter.value.brand) query.brand = filter.value.brand;
-      if (filter.value.isActive !== "") query.isActive = filter.value.isActive;
+
+      if (filter.value.isActive === "true" || filter.value.isActive === "false")
+        query.isActive = filter.value.isActive;
+
       if (filter.value.sortBy) query.sortBy = filter.value.sortBy;
 
-      const res = await api<any>("/products", { query });
+      const res = await api<any>("/products/admin/list", { query });
       items.value = res.products;
       total.value = res.total;
       totalPages.value = res.totalPages;
@@ -64,11 +70,20 @@ export const useProductStore = defineStore("products", () => {
   }
 
   async function toggleActive(id: number, isActive: boolean) {
-    const formData = new FormData();
-    formData.append("isActive", String(isActive));
-    const res = await uploadPatch<Product>(`/products/${id}`, formData);
+    const res = await api<Product>(`/products/${id}`, {
+      method: "PATCH",
+      body: { isActive },
+    });
     const idx = items.value.findIndex((p) => p.id === id);
-    if (idx !== -1) items.value[idx].isActive = isActive;
+    if (idx !== -1) {
+      items.value[idx].isActive = isActive;
+      if (items.value[idx].variants) {
+        items.value[idx].variants = items.value[idx].variants.map((v: any) => ({
+          ...v,
+          isActive,
+        }));
+      }
+    }
     return res;
   }
 
