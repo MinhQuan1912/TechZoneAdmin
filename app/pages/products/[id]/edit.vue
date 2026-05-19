@@ -2,9 +2,7 @@
   <div class="max-w-4xl mx-auto space-y-6">
     <div class="flex items-center gap-4">
       <UButton color="neutral" variant="ghost" icon="i-heroicons-arrow-left" to="/products" />
-      <h1 class="page-title">
-        Chỉnh sửa sản phẩm
-      </h1>
+      <h1 class="page-title">Chỉnh sửa sản phẩm</h1>
     </div>
 
     <div v-if="productStore.loading" class="space-y-4">
@@ -16,9 +14,7 @@
     <form v-else-if="productStore.current" class="space-y-6" @submit.prevent="handleSubmit">
       <UCard>
         <template #header>
-          <h3 class="font-semibold">
-            Thông tin cơ bản
-          </h3>
+          <h3 class="font-semibold">Thông tin cơ bản</h3>
         </template>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <UFormField label="Tên sản phẩm *" class="md:col-span-2">
@@ -33,47 +29,29 @@
           <UFormField label="Mô tả" class="md:col-span-2">
             <UTextarea v-model="form.description" :rows="4" class="w-full" />
           </UFormField>
-          <UFormField label="Trạng thái">
-            <div class="flex items-center gap-3">
-              <USwitch v-model="form.isActive" />
-              <span class="text-sm">{{ form.isActive ? 'Hiển thị' : 'Ẩn' }}</span>
-            </div>
-          </UFormField>
         </div>
       </UCard>
-
       <UCard>
         <template #header>
-          <div>
-            <h3 class="font-semibold">
-              Ảnh chung sản phẩm
-            </h3>
-          </div>
+          <h3 class="font-semibold">Ảnh chung sản phẩm</h3>
         </template>
 
         <div v-if="existingImages.length > 0" class="mb-4">
-          <p class="text-xs font-medium text-gray-600 mb-2">
-            Ảnh hiện tại:
-          </p>
+          <p class="text-xs font-medium text-gray-600 mb-2">Ảnh hiện tại:</p>
           <div class="grid grid-cols-4 md:grid-cols-6 gap-2">
             <div v-for="img in existingImages" :key="img.id"
               class="relative group rounded-xl overflow-hidden border-2 cursor-pointer transition-all" :class="[
                 img.isMain ? 'border-primary-500' : 'border-transparent hover:border-gray-300',
-                toDeleteImageIds.includes(img.id) ? 'opacity-40 scale-90' : ''
+                toDeleteImageIds.includes(img.id) ? 'opacity-40 scale-90' : '',
               ]" @click="!toDeleteImageIds.includes(img.id) && handleSetMainImage(img.id)">
               <img :src="img.url" class="w-full h-20 object-cover">
-
               <div v-if="img.isMain && !toDeleteImageIds.includes(img.id)" class="absolute top-1 left-1">
-                <UBadge color="primary" size="xs">
-                  Chính
-                </UBadge>
+                <UBadge color="primary" size="xs">Chính</UBadge>
               </div>
-
               <div v-if="toDeleteImageIds.includes(img.id)"
                 class="absolute inset-0 flex items-center justify-center bg-red-500/20">
                 <span class="text-xs font-bold text-red-600 bg-white/90 px-2 py-0.5 rounded">Xóa</span>
               </div>
-
               <button type="button"
                 class="absolute top-1 right-1 w-5 h-5 rounded-full text-white text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 :class="toDeleteImageIds.includes(img.id) ? 'bg-gray-500' : 'bg-red-500'"
@@ -83,7 +61,7 @@
             </div>
           </div>
           <p class="text-xs text-gray-400 mt-2">
-            Click ảnh để đặt làm ảnh chính - Click × để đánh dấu xóa — Click ↩ để khôi phục
+            Click ảnh để đặt làm ảnh chính · Click × để đánh dấu xóa · Click ↩ để khôi phục
           </p>
         </div>
 
@@ -92,16 +70,12 @@
           @click="newImageFileInput?.click()" @dragover.prevent
           @drop.prevent="e => addNewImages(Array.from(e.dataTransfer?.files || []))">
           <UIcon name="i-heroicons-plus" class="w-6 h-6 text-gray-300 mx-auto mb-1" />
-          <p class="text-sm text-gray-500">
-            Thêm ảnh mới
-          </p>
+          <p class="text-sm text-gray-500">Thêm ảnh mới</p>
         </div>
         <input ref="newImageFileInput" type="file" accept="image/*" multiple class="hidden" @change="onNewImageChange">
 
         <div v-if="newImagePreviews.length > 0" class="mt-3">
-          <p class="text-xs text-gray-500 mb-2">
-            Ảnh mới - click để chọn ảnh chính (trong batch upload này)
-          </p>
+          <p class="text-xs text-gray-500 mb-2">Ảnh mới — click để chọn ảnh chính</p>
           <div class="grid grid-cols-4 md:grid-cols-6 gap-2">
             <div v-for="(img, idx) in newImagePreviews" :key="idx"
               class="relative group rounded-xl overflow-hidden border-2 cursor-pointer transition-all"
@@ -109,9 +83,7 @@
               @click="newMainIndex = idx">
               <img :src="img" class="w-full h-20 object-cover">
               <div v-if="newMainIndex === idx" class="absolute top-1 left-1">
-                <UBadge color="primary" size="xs">
-                  Chính
-                </UBadge>
+                <UBadge color="primary" size="xs">Chính</UBadge>
               </div>
               <button type="button"
                 class="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full text-xs flex items-center justify-center opacity-0 group-hover:opacity-100"
@@ -126,19 +98,20 @@
       <UCard>
         <template #header>
           <div class="flex items-center justify-between">
-            <div>
-              <h3 class="font-semibold">
-                Biến thể
-              </h3>
+            <h3 class="font-semibold">Biến thể</h3>
+            <div class="flex items-center gap-2">
+              <UBadge color="success" variant="soft" size="sm">
+                {{ activeVariants.length }} đang hiển thị
+              </UBadge>
+              <UBadge v-if="inactiveVariants.length > 0" color="neutral" variant="soft" size="sm">
+                {{ inactiveVariants.length }} đã ẩn
+              </UBadge>
             </div>
-            <UBadge color="neutral" variant="soft">
-              {{ productStore.current.variants.length }} biến thể
-            </UBadge>
           </div>
         </template>
 
         <div class="space-y-3">
-          <div v-for="variant in productStore.current.variants" :key="variant.id"
+          <div v-for="variant in activeVariants" :key="variant.id"
             class="border border-gray-200 rounded-xl overflow-hidden">
             <div class="flex items-center justify-between px-4 py-3 bg-gray-50 cursor-pointer select-none"
               @click="toggleExpand(variant.id)">
@@ -153,7 +126,7 @@
                     Dung lượng: {{ variant.storage }}
                   </UBadge>
                   <UBadge v-if="variant.ram" color="neutral" variant="soft" size="sm">
-                    Ram: {{ variant.ram }}
+                    RAM: {{ variant.ram }}
                   </UBadge>
                   <UBadge v-if="variant.version" color="neutral" variant="soft" size="sm">
                     Phiên bản: {{ variant.version }}
@@ -162,18 +135,15 @@
               </div>
               <div class="flex items-center gap-3">
                 <img v-if="variant.imageUrl" :src="variant.imageUrl"
-                  class="w-8 h-8 rounded-lg object-cover border border-primary-200" :title="`Ảnh màu ${variant.color}`">
+                  class="w-8 h-8 rounded-lg object-cover border border-primary-200">
                 <div v-else-if="variant.color"
-                  class="w-8 h-8 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center"
-                  title="Chưa có ảnh màu">
+                  class="w-8 h-8 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
                   <UIcon name="i-heroicons-photo" class="w-4 h-4 text-gray-300" />
                 </div>
-                <span class="text-sm text-green-600 font-medium">
-                  {{ formatCurrency(variant.salePrice) }}
-                </span>
+                <span class="text-sm text-green-600 font-medium">{{ formatCurrency(variant.salePrice) }}</span>
                 <span class="text-xs text-gray-400">Kho: {{ variant.stock }}</span>
-                <UButton size="xs" color="error" variant="ghost" icon="i-heroicons-trash"
-                  @click.stop="openDeleteVariant(variant.id)" />
+                <UButton size="xs" color="warning" variant="ghost" icon="i-heroicons-eye-slash" title="Ẩn biến thể"
+                  :loading="togglingVariantId === variant.id" @click.stop="toggleVariantActive(variant.id, false)" />
               </div>
             </div>
 
@@ -211,12 +181,11 @@
                 </UFormField>
               </div>
 
+              <!-- Ảnh màu -->
               <div class="border-t border-gray-100 pt-4">
                 <p class="text-sm font-medium text-gray-700 mb-3">
-                  Ảnh cho màu
-                  <span class="text-primary-600">{{ variant.color || 'này' }}</span>
+                  Ảnh cho màu <span class="text-primary-600">{{ variant.color || 'này' }}</span>
                 </p>
-
                 <div class="flex items-start gap-4">
                   <div class="shrink-0">
                     <div v-if="variant.imageUrl"
@@ -246,6 +215,7 @@
                 <input :ref="el => { if (el) variantImageInputs[variant.id] = el as HTMLInputElement }" type="file"
                   accept="image/*" class="hidden" @change="e => handleVariantImageChange(e, variant.id)">
               </div>
+
               <div class="flex justify-end gap-2 pt-2 border-t border-gray-100">
                 <UButton size="sm" color="primary" :loading="savingVariantId === variant.id" icon="i-heroicons-check"
                   @click="saveVariant(variant.id)">
@@ -254,13 +224,40 @@
               </div>
             </div>
           </div>
+
+          <!-- Biến thể đã ẩn -->
+          <div v-if="inactiveVariants.length > 0" class="mt-4">
+            <button type="button" class="flex items-center gap-2 text-xs text-gray-400 hover:text-gray-600 mb-2"
+              @click="showInactive = !showInactive">
+              <UIcon :name="showInactive ? 'i-heroicons-chevron-down' : 'i-heroicons-chevron-right'" class="w-3 h-3" />
+              {{ showInactive ? 'Ẩn' : 'Xem' }} {{ inactiveVariants.length }} biến thể đã ẩn
+            </button>
+
+            <div v-if="showInactive" class="space-y-2">
+              <div v-for="variant in inactiveVariants" :key="variant.id"
+                class="flex items-center justify-between px-4 py-3 bg-gray-50 border border-dashed border-gray-200 rounded-xl opacity-60">
+                <div class="flex flex-wrap gap-1.5">
+                  <UBadge v-if="variant.color" color="neutral" variant="soft" size="sm">
+                    {{ variant.color }}
+                  </UBadge>
+                  <UBadge v-if="variant.storage" color="neutral" variant="soft" size="sm">
+                    {{ variant.storage }}
+                  </UBadge>
+                  <UBadge v-if="variant.ram" color="neutral" variant="soft" size="sm">
+                    {{ variant.ram }}
+                  </UBadge>
+                  <span class="text-xs text-gray-400">{{ formatCurrency(variant.salePrice) }}</span>
+                </div>
+                <UButton size="xs" color="success" variant="ghost" icon="i-heroicons-eye" title="Hiển thị lại biến thể"
+                  :loading="togglingVariantId === variant.id" @click="toggleVariantActive(variant.id, true)" />
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="mt-4 pt-4 border-t border-gray-200">
           <div class="flex items-center justify-between mb-3">
-            <h4 class="text-sm font-medium text-gray-700">
-              Thêm biến thể mới
-            </h4>
+            <h4 class="text-sm font-medium text-gray-700">Thêm biến thể mới</h4>
             <UButton size="xs" color="neutral" variant="ghost"
               :icon="showNewVariants ? 'i-heroicons-chevron-up' : 'i-heroicons-chevron-down'"
               @click="showNewVariants = !showNewVariants" />
@@ -270,21 +267,17 @@
       </UCard>
 
       <div class="flex justify-end gap-3 pb-6">
-        <UButton to="/products" color="neutral" variant="outline">
-          Hủy
-        </UButton>
+        <UButton to="/products" color="neutral" variant="outline">Hủy</UButton>
         <UButton type="submit" color="primary" :loading="loading" icon="i-heroicons-check">
           Lưu thông tin sản phẩm
         </UButton>
       </div>
     </form>
-
-    <CommonAppConfirmModal v-model:open="variantDeleteOpen" title="Xóa biến thể"
-      message="Xóa biến thể này? Ảnh màu cũng sẽ bị xóa." :loading="variantDeleting" @confirm="doDeleteVariant" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useFormat } from '~/composables/useFormat'
 import type { VariantForm, ProductVariant } from '~/types'
 
 const route = useRoute()
@@ -292,6 +285,7 @@ const productId = Number(route.params.id)
 const productStore = useProductStore()
 const catStore = useCategoryStore()
 const toast = useToast()
+const { formatCurrency } = useFormat()
 
 const newImageFileInput = ref<HTMLInputElement | null>(null)
 const loading = ref(false)
@@ -302,19 +296,17 @@ const newMainIndex = ref(0)
 
 const expanded = ref<number[]>([])
 const variantForms = ref<Record<number, any>>({})
-const quickStock = ref<Record<number, string>>({})
 const savingVariantId = ref<number | null>(null)
-const variantDeleteOpen = ref(false)
-const selectedVariantId = ref<number | null>(null)
-const variantDeleting = ref(false)
+const togglingVariantId = ref<number | null>(null)
 const showNewVariants = ref(false)
+const showInactive = ref(false)
 const newVariants = ref<VariantForm[]>([])
 
 const variantImageInputs = ref<Record<number, HTMLInputElement>>({})
 const removingVariantImageId = ref<number | null>(null)
 
 const form = reactive({
-  name: '', description: '', brand: '', categoryId: '', isActive: true
+  name: '', description: '', brand: '', categoryId: '',
 })
 
 const existingImages = computed(() => productStore.current?.images || [])
@@ -322,8 +314,15 @@ const categoryOptions = computed(() =>
   catStore.items.map(c => ({ label: c.name, value: String(c.id) }))
 )
 
+const activeVariants = computed(() =>
+  (productStore.current?.variants || []).filter((v: any) => v.isActive !== false)
+)
+const inactiveVariants = computed(() =>
+  (productStore.current?.variants || []).filter((v: any) => v.isActive === false)
+)
+
 function initVariantForms(variants: ProductVariant[]) {
-  variants.forEach((v) => {
+  variants.forEach((v: any) => {
     variantForms.value[v.id] = {
       color: v.color || '',
       storage: v.storage || '',
@@ -332,9 +331,8 @@ function initVariantForms(variants: ProductVariant[]) {
       version: v.version || '',
       stock: String(v.stock),
       originalPrice: String(v.originalPrice),
-      salePrice: String(v.salePrice)
+      salePrice: String(v.salePrice),
     }
-    quickStock.value[v.id] = ''
   })
 }
 
@@ -394,14 +392,10 @@ function triggerVariantImageInput(variantId: number) {
 async function handleVariantImageChange(e: Event, variantId: number) {
   const file = (e.target as HTMLInputElement).files?.[0]
   if (!file) return
-
   savingVariantId.value = variantId
   try {
     await productStore.setVariantImage(variantId, file)
-    toast.add({
-      title: 'Đã cập nhật ảnh màu',
-      color: 'success'
-    })
+    toast.add({ title: 'Đã cập nhật ảnh màu', color: 'success' })
   } catch {
     toast.add({ title: 'Upload ảnh thất bại', color: 'error' })
   } finally {
@@ -419,6 +413,23 @@ async function handleRemoveVariantImage(variantId: number) {
     toast.add({ title: 'Đã xóa ảnh màu', color: 'info' })
   } finally {
     removingVariantImageId.value = null
+  }
+}
+
+async function toggleVariantActive(variantId: number, isActive: boolean) {
+  togglingVariantId.value = variantId
+  try {
+    await productStore.updateVariant(variantId, { isActive })
+    toast.add({
+      title: isActive ? 'Đã hiển thị lại biến thể' : 'Đã ẩn biến thể',
+      color: isActive ? 'success' : 'warning',
+    })
+    await productStore.fetchOne(productId)
+    initVariantForms(productStore.current!.variants)
+  } catch {
+    toast.add({ title: 'Lỗi cập nhật biến thể', color: 'error' })
+  } finally {
+    togglingVariantId.value = null
   }
 }
 
@@ -440,33 +451,13 @@ async function saveVariant(variantId: number) {
       version: f.version || null,
       stock: Number(f.stock),
       originalPrice: Number(f.originalPrice),
-      salePrice: Number(f.salePrice)
+      salePrice: Number(f.salePrice),
     })
     toast.add({ title: 'Đã lưu biến thể', color: 'success' })
     await productStore.fetchOne(productId)
     initVariantForms(productStore.current!.variants)
   } finally {
     savingVariantId.value = null
-  }
-}
-
-function openDeleteVariant(id: number) {
-  selectedVariantId.value = id
-  variantDeleteOpen.value = true
-}
-
-async function doDeleteVariant() {
-  if (!selectedVariantId.value) return
-  variantDeleting.value = true
-  try {
-    await productStore.deleteVariant(selectedVariantId.value)
-    expanded.value = expanded.value.filter(id => id !== selectedVariantId.value)
-    variantDeleteOpen.value = false
-    await productStore.fetchOne(productId)
-    initVariantForms(productStore.current!.variants)
-    toast.add({ title: 'Đã xóa biến thể', color: 'success' })
-  } finally {
-    variantDeleting.value = false
   }
 }
 
@@ -478,7 +469,6 @@ async function handleSubmit() {
     formData.append('description', form.description)
     formData.append('brand', form.brand)
     formData.append('categoryId', form.categoryId)
-    formData.append('isActive', String(form.isActive))
 
     if (toDeleteImageIds.value.length > 0) {
       formData.append('deleteImageIds', JSON.stringify(toDeleteImageIds.value))
@@ -489,6 +479,7 @@ async function handleSubmit() {
     }
 
     await productStore.update(productId, formData)
+
     for (const v of newVariants.value) {
       if (!v.originalPrice || !v.salePrice) continue
       let createdVariant: { id: number } | null = null
@@ -531,7 +522,6 @@ onMounted(async () => {
     form.description = p.description || ''
     form.brand = p.brand
     form.categoryId = String(p.categoryId)
-    form.isActive = p.isActive
     initVariantForms(p.variants)
   }
 })
