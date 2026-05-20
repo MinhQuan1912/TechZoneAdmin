@@ -38,7 +38,7 @@ export const useApi = () => {
           await authStore.doRefresh()
           return await doFetch()
         } catch {
-          authStore.logout()
+          await authStore.logout()
           await navigateTo('/login')
           throw error
         }

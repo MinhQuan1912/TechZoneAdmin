@@ -29,7 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function doRefresh() {
-    await $fetch<any>('/auth/refresh', {
+    await $fetch<any>('/auth/admin/refresh', {
       baseURL,
       method: 'POST',
       credentials: 'include',
@@ -40,7 +40,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout() {
-    await $fetch<any>('/auth/logout', {
+    await $fetch<any>('/auth/admin/logout', {
       baseURL,
       method: 'POST',
       credentials: 'include',
