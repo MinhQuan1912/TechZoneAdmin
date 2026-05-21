@@ -83,6 +83,7 @@ export type OrderStatus =
   | "CONFIRMED"
   | "SHIPPING"
   | "DELIVERED"
+  | "COMPLETED"
   | "CANCELLED";
 
 export interface Order {

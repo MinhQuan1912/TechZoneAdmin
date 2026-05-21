@@ -1,30 +1,25 @@
 <template>
   <div class="space-y-4">
     <UCard>
-      <div class="flex gap-3 flex-wrap">
-        <USelect
-          v-model="store.statusFilter"
-          :items="statusOptions"
-          placeholder="Tất cả trạng thái"
-          class="w-48"
-          @update:model-value="doFilter"
-        />
-        <UButton
-          color="neutral"
-          variant="outline"
-          @click="resetFilter"
-        >
+      <div class="flex gap-3 flex-wrap items-center">
+        <UInput v-model="store.search" placeholder="Tìm theo mã đơn" icon="i-heroicons-magnifying-glass" class="w-64"
+          @keyup.enter="doFilter" />
+
+        <USelect v-model="store.statusFilter" :items="statusOptions" placeholder="Tất cả trạng thái" class="w-48"
+          @update:model-value="doFilter" />
+
+        <UButton icon="i-heroicons-magnifying-glass" @click="doFilter">
+          Tìm
+        </UButton>
+
+        <UButton color="neutral" variant="outline" @click="resetFilter">
           Reset
         </UButton>
       </div>
     </UCard>
 
     <UCard>
-      <UTable
-        :data="store.items"
-        :columns="columns"
-        :loading="store.loading"
-      >
+      <UTable :data="store.items" :columns="columns" :loading="store.loading">
         <template #code-cell="{ row }">
           <div class="font-mono text-xs text-primary-600">
             {{ row.original.code }}
@@ -32,30 +27,20 @@
         </template>
         <template #user-cell="{ row }">
           <div>
-            <p class="text-sm font-medium">
-              {{ row.original.user?.name }}
-            </p>
-            <p class="text-xs text-gray-500">
-              {{ row.original.user?.email }}
-            </p>
+            <p class="text-sm font-medium">{{ row.original.user?.name }}</p>
+            <p class="text-xs text-gray-500">{{ row.original.user?.email }}</p>
           </div>
         </template>
         <template #finalAmount-cell="{ row }">
           <span class="font-semibold text-green-600">{{ formatCurrency(row.original.finalAmount) }}</span>
         </template>
         <template #status-cell="{ row }">
-          <UBadge
-            :color="(statusColors[row.original.status] as any)"
-            variant="soft"
-          >
+          <UBadge :color="(statusColors[row.original.status] as any)" variant="soft">
             {{ statusLabels[row.original.status] }}
           </UBadge>
         </template>
         <template #isPaid-cell="{ row }">
-          <UBadge
-            :color="row.original.isPaid ? 'success' : 'warning'"
-            variant="soft"
-          >
+          <UBadge :color="row.original.isPaid ? 'success' : 'warning'" variant="soft">
             {{ row.original.isPaid ? 'Đã TT' : 'Chưa TT' }}
           </UBadge>
         </template>
@@ -64,71 +49,51 @@
         </template>
         <template #actions-cell="{ row }">
           <div class="flex gap-2">
-            <UButton
-              size="xs"
-              color="neutral"
-              variant="outline"
-              icon="i-heroicons-eye"
-              :to="`/orders/${row.original.id}`"
-            />
-            <USelect
-              v-if="row.original.status !== 'DELIVERED' && row.original.status !== 'CANCELLED'"
-              :model-value="row.original.status"
-              :items="nextStatusOptions(row.original.status)"
-              size="xs"
-              class="w-36"
-              @update:model-value="(val: string) => updateStatus(row.original.id, val)"
-            />
+            <UButton size="xs" color="neutral" variant="outline" icon="i-heroicons-eye"
+              :to="`/orders/${row.original.id}`" />
+            <USelect v-if="nextStatusOptions(row.original.status).length > 0" :model-value="row.original.status"
+              :items="nextStatusOptions(row.original.status)" size="xs" class="w-36"
+              @update:model-value="(val: string) => updateStatus(row.original.id, val)" />
           </div>
         </template>
         <template #empty>
-          <div class="text-center py-8 text-gray-400">
-            Không có đơn hàng
-          </div>
+          <div class="text-center py-8 text-gray-400">Không có đơn hàng</div>
         </template>
       </UTable>
 
-      <CommonAppPagination
-        v-model:page="store.page"
-        :total="store.total"
-        :total-pages="store.totalPages"
-        :items-per-page="store.limit"
-        @change="store.changePage"
-      />
+      <CommonAppPagination v-model:page="store.page" :total="store.total" :total-pages="store.totalPages"
+        :items-per-page="store.limit" @change="store.changePage" />
     </UCard>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useFormat } from '~/composables/useFormat'
 import { useOrderStore } from '~/stores/orders'
 import type { OrderStatus } from '~/types'
 
 const ALL_STATUSES = '__all__'
 const store = useOrderStore()
+const { formatCurrency, formatDate } = useFormat()
 
 const statusColors: Record<OrderStatus, string> = {
-  PENDING: 'warning',
-  CONFIRMED: 'info',
-  SHIPPING: 'primary',
-  DELIVERED: 'success',
-  CANCELLED: 'error'
+  PENDING: 'warning', CONFIRMED: 'info',
+  SHIPPING: 'primary', DELIVERED: 'success',
+  COMPLETED: 'success', CANCELLED: 'error',
 }
-
 const statusLabels: Record<OrderStatus, string> = {
-  PENDING: 'Chờ XN',
-  CONFIRMED: 'Đã XN',
-  SHIPPING: 'Đang giao',
-  DELIVERED: 'Đã giao',
-  CANCELLED: 'Đã hủy'
+  PENDING: 'Chờ XN', CONFIRMED: 'Đã XN',
+  SHIPPING: 'Đang giao', DELIVERED: 'Đã giao',
+  COMPLETED: 'Hoàn thành', CANCELLED: 'Đã hủy',
 }
-
 const statusOptions = [
   { label: 'Tất cả', value: ALL_STATUSES },
   { label: 'Chờ xác nhận', value: 'PENDING' },
   { label: 'Đã xác nhận', value: 'CONFIRMED' },
   { label: 'Đang giao', value: 'SHIPPING' },
   { label: 'Đã giao', value: 'DELIVERED' },
-  { label: 'Đã hủy', value: 'CANCELLED' }
+  { label: 'Hoàn thành', value: 'COMPLETED' },
+  { label: 'Đã hủy', value: 'CANCELLED' },
 ]
 
 function nextStatusOptions(current: OrderStatus) {
@@ -158,6 +123,7 @@ function doFilter() {
 
 function resetFilter() {
   store.statusFilter = ALL_STATUSES
+  store.search = ''
   store.page = 1
   store.fetchAll()
 }

@@ -79,12 +79,14 @@
                   </div>
                </UCard>
 
-               <UCard v-if="!['DELIVERED', 'CANCELLED'].includes(store.current.status)">
+               <UCard v-if="availableStatuses.length > 0">
                   <template #header>
                      <h3 class="font-semibold">Cập nhật trạng thái</h3>
                   </template>
                   <div class="space-y-3">
-                     <USelect v-model="newStatus" :items="availableStatuses" class="w-full" />
+                     <USelect v-model="newStatus" :items="availableStatuses" placeholder="Chọn trạng thái mới"
+                        class="w-full" />
+
                      <UButton color="primary" class="w-full" :loading="updating" :disabled="!newStatus"
                         @click="doUpdateStatus">
                         Cập nhật
@@ -101,19 +103,18 @@
             <div class="divide-y divide-gray-100">
                <div v-for="item in store.current.items" :key="item.id"
                   class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 first:pt-0 last:pb-0">
-                  <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
-                     <img
-                        v-if="item.variant?.imageUrl || item.product?.images?.[0]?.url"
-                        :src="item.variant?.imageUrl || item.product?.images?.[0]?.url"
-                        :alt="item.product?.name"
-                        class="w-full h-full object-cover"
-                     />
+                  <div
+                     class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center shrink-0 overflow-hidden">
+                     <img v-if="item.variant?.imageUrl || item.product?.images?.[0]?.url"
+                        :src="item.variant?.imageUrl || item.product?.images?.[0]?.url" :alt="item.product?.name"
+                        class="w-full h-full object-cover" />
                      <UIcon v-else name="i-heroicons-photo" class="w-5 h-5 text-gray-300" />
                   </div>
                   <div class="flex-1 min-w-0">
                      <p class="font-medium text-sm truncate">{{ item.product?.name }}</p>
                      <p class="text-xs text-gray-500">
-                        {{ [item.variant?.color, item.variant?.storage, item.variant?.ram].filter(Boolean).join(' / ') }}
+                        {{ [item.variant?.color, item.variant?.storage, item.variant?.ram].filter(Boolean).join(' / ')
+                        }}
                      </p>
                   </div>
                   <div class="text-right shrink-0">
@@ -145,19 +146,19 @@ const newStatus = ref('')
 
 const statusColors: Record<OrderStatus, string> = {
    PENDING: 'warning', CONFIRMED: 'info',
-   SHIPPING: 'primary', DELIVERED: 'success', CANCELLED: 'error',
+   SHIPPING: 'primary', DELIVERED: 'success',
+   COMPLETED: 'success', CANCELLED: 'error',
 }
 const statusLabels: Record<OrderStatus, string> = {
    PENDING: 'Chờ xác nhận', CONFIRMED: 'Đã xác nhận',
-   SHIPPING: 'Đang giao', DELIVERED: 'Đã giao', CANCELLED: 'Đã hủy',
+   SHIPPING: 'Đang giao', DELIVERED: 'Đã giao',
+   COMPLETED: 'Hoàn thành', CANCELLED: 'Đã hủy',
 }
-
 const nextSteps: Record<string, string[]> = {
    PENDING: ['CONFIRMED', 'CANCELLED'],
    CONFIRMED: ['SHIPPING', 'CANCELLED'],
    SHIPPING: ['DELIVERED'],
 }
-
 const availableStatuses = computed(() => {
    const current = store.current?.status || ''
    return (nextSteps[current] || []).map(s => ({
