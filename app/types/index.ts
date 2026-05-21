@@ -150,7 +150,7 @@ export interface RevenueStats {
   onth: number | null;
   totalRevenue: number;
   orderCount: number;
-  deliveredOrders: number;
+  completedOrders: number;
   totalUsers: number;
   newUsers: number;
   chartData: { date: string; revenue: string }[];

@@ -1,70 +1,28 @@
 <template>
   <div class="space-y-6">
     <div class="flex items-center gap-2">
-      <USelect
-        v-model="selectedMonth"
-        :items="monthOptions"
-        value-key="value"
-        label-key="label"
-        class="w-36"
-        @update:model-value="onFilterChange"
-      />
-      <USelect
-        v-model="selectedYear"
-        :items="yearOptions"
-        value-key="value"
-        label-key="label"
-        class="w-28"
-        @update:model-value="onFilterChange"
-      />
+      <USelect v-model="selectedMonth" :items="monthOptions" value-key="value" label-key="label" class="w-36"
+        @update:model-value="onFilterChange" />
+      <USelect v-model="selectedYear" :items="yearOptions" value-key="value" label-key="label" class="w-28"
+        @update:model-value="onFilterChange" />
     </div>
-    <div
-      v-if="dashStore.loading"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-    >
-      <UCard
-        v-for="i in 4"
-        :key="i"
-        class="animate-pulse"
-      >
+    <div v-if="dashStore.loading" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <UCard v-for="i in 4" :key="i" class="animate-pulse">
         <div class="h-16 bg-gray-100 rounded" />
       </UCard>
     </div>
-    <div
-      v-else
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
-    >
-      <CommonAppStatsCard
-        icon="i-heroicons-currency-dollar"
-        label="Doanh thu"
-        :value="formatCurrency(dashStore.revenue?.totalRevenue || 0)"
-        bg-color="bg-green-50"
-        icon-color="text-green-600"
-      />
-      <CommonAppStatsCard
-        icon="i-heroicons-shopping-cart"
-        label="Tổng đơn hàng"
-        :value="dashStore.revenue?.orderCount || 0"
-        :sub="`Đã giao: ${dashStore.revenue?.deliveredOrders || 0}`"
-        bg-color="bg-blue-50"
-        icon-color="text-blue-600"
-      />
-      <CommonAppStatsCard
-        icon="i-heroicons-users"
-        label="Người dùng"
-        :value="dashStore.revenue?.totalUsers || 0"
-        :sub="`Mới trong kỳ: ${dashStore.revenue?.newUsers || 0}`"
-        bg-color="bg-purple-50"
-        icon-color="text-purple-600"
-      />
-      <CommonAppStatsCard
-        icon="i-heroicons-cube"
-        label="Sản phẩm"
-        :value="dashStore.stats?.totalProducts || 0"
-        sub="Đang hiển thị"
-        bg-color="bg-orange-50"
-        icon-color="text-orange-600"
-      />
+    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <CommonAppStatsCard icon="i-heroicons-currency-dollar" label="Doanh thu"
+        :value="formatCurrency(dashStore.revenue?.totalRevenue || 0)" bg-color="bg-green-50"
+        icon-color="text-green-600" />
+      <CommonAppStatsCard icon="i-heroicons-shopping-cart" label="Tổng đơn hàng"
+        :value="dashStore.revenue?.orderCount || 0" :sub="`Đã hoàn thành: ${dashStore.revenue?.completedOrders || 0}`"
+        bg-color="bg-blue-50" icon-color="text-blue-600" />
+      <CommonAppStatsCard icon="i-heroicons-users" label="Người dùng" :value="dashStore.revenue?.totalUsers || 0"
+        :sub="`Mới trong kỳ: ${dashStore.revenue?.newUsers || 0}`" bg-color="bg-purple-50"
+        icon-color="text-purple-600" />
+      <CommonAppStatsCard icon="i-heroicons-cube" label="Sản phẩm" :value="dashStore.stats?.totalProducts || 0"
+        sub="Đang hiển thị" bg-color="bg-orange-50" icon-color="text-orange-600" />
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -74,59 +32,31 @@
             Doanh thu {{ selectedMonth === 0 ? `năm ${selectedYear}` : `tháng ${selectedMonth}/${selectedYear}` }}
           </h3>
         </template>
-        <div
-          v-if="dashStore.loading"
-          class="h-64 bg-gray-50 rounded-lg animate-pulse"
-        />
-        <div
-          v-else-if="chartData.length === 0"
-          class="h-64 flex flex-col items-center justify-center gap-2 text-gray-400"
-        >
-          <UIcon
-            name="i-heroicons-chart-bar"
-            class="w-10 h-10 text-gray-200"
-          />
+        <div v-if="dashStore.loading" class="h-64 bg-gray-50 rounded-lg animate-pulse" />
+        <div v-else-if="chartData.length === 0"
+          class="h-64 flex flex-col items-center justify-center gap-2 text-gray-400">
+          <UIcon name="i-heroicons-chart-bar" class="w-10 h-10 text-gray-200" />
           <span class="text-sm">Không có dữ liệu trong kỳ này</span>
         </div>
         <div v-else>
-          <div
-            class="relative flex gap-3"
-            style="height: 220px;"
-          >
-            <div
-              class="flex flex-col justify-between items-end shrink-0 pb-6"
-              style="width: 72px;"
-            >
-              <span
-                v-for="i in 5"
-                :key="i"
-                class="text-xs text-gray-400 leading-none"
-              >
+          <div class="relative flex gap-3" style="height: 220px;">
+            <div class="flex flex-col justify-between items-end shrink-0 pb-6" style="width: 72px;">
+              <span v-for="i in 5" :key="i" class="text-xs text-gray-400 leading-none">
                 {{ formatYAxis(maxRevenue * (1 - (i - 1) / 4)) }}
               </span>
             </div>
             <div class="flex-1 relative pb-6">
               <div class="absolute inset-0 pb-6 flex flex-col justify-between pointer-events-none">
-                <div
-                  v-for="i in 5"
-                  :key="i"
-                  class="w-full border-t"
-                  :class="i === 1 ? 'border-gray-200' : 'border-dashed border-gray-100'"
-                />
+                <div v-for="i in 5" :key="i" class="w-full border-t"
+                  :class="i === 1 ? 'border-gray-200' : 'border-dashed border-gray-100'" />
               </div>
               <div class="absolute inset-0 pb-6 flex items-end gap-px">
-                <div
-                  v-for="(item, idx) in chartData"
-                  :key="idx"
-                  class="flex-1 group relative flex items-end"
-                  style="height: 100%;"
-                >
-                  <div
-                    class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-10
+                <div v-for="(item, idx) in chartData" :key="idx" class="flex-1 group relative flex items-end"
+                  style="height: 100%;">
+                  <div class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 z-10
                            bg-gray-800 text-white text-xs px-2 py-1 rounded-md
                            whitespace-nowrap opacity-0 group-hover:opacity-100
-                           pointer-events-none transition-opacity"
-                  >
+                           pointer-events-none transition-opacity">
                     <p class="font-medium">
                       {{ formatChartLabel(item.date) }}
                     </p>
@@ -136,20 +66,12 @@
                   </div>
                   <div
                     class="w-full rounded-t-sm transition-all duration-200 bg-primary-300 hover:bg-primary-500 cursor-pointer"
-                    :style="{ height: barHeightPx(item.revenue) + 'px' }"
-                  />
+                    :style="{ height: barHeightPx(item.revenue) + 'px' }" />
                 </div>
               </div>
               <div class="absolute bottom-0 left-0 right-0 flex">
-                <div
-                  v-for="(item, idx) in chartData"
-                  :key="idx"
-                  class="flex-1 flex justify-center"
-                >
-                  <span
-                    v-if="shouldShowLabel(idx)"
-                    class="text-xs text-gray-400 leading-none"
-                  >
+                <div v-for="(item, idx) in chartData" :key="idx" class="flex-1 flex justify-center">
+                  <span v-if="shouldShowLabel(idx)" class="text-xs text-gray-400 leading-none">
                     {{ formatChartLabel(item.date) }}
                   </span>
                 </div>
@@ -166,30 +88,15 @@
           </h3>
         </template>
         <div class="space-y-3">
-          <div
-            v-for="(p, idx) in dashStore.revenue?.topProducts || []"
-            :key="p.id"
-            class="flex items-center gap-3"
-          >
+          <div v-for="(p, idx) in dashStore.revenue?.topProducts || []" :key="p.id" class="flex items-center gap-3">
             <span
-              class="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-bold shrink-0"
-            >
+              class="w-6 h-6 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center text-xs font-bold shrink-0">
               {{ idx + 1 }}
             </span>
-            <img
-              v-if="p.images?.[0]?.url"
-              :src="p.images[0].url"
-              class="w-8 h-8 rounded object-cover shrink-0"
-              :alt="p.name"
-            >
-            <div
-              v-else
-              class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center shrink-0"
-            >
-              <UIcon
-                name="i-heroicons-photo"
-                class="text-gray-400 w-4 h-4"
-              />
+            <img v-if="p.images?.[0]?.url" :src="p.images[0].url" class="w-8 h-8 rounded object-cover shrink-0"
+              :alt="p.name">
+            <div v-else class="w-8 h-8 rounded bg-gray-100 flex items-center justify-center shrink-0">
+              <UIcon name="i-heroicons-photo" class="text-gray-400 w-4 h-4" />
             </div>
             <div class="flex-1 min-w-0">
               <p class="text-sm font-medium text-gray-900 truncate">
@@ -202,10 +109,7 @@
               </p>
             </div>
           </div>
-          <div
-            v-if="!dashStore.revenue?.topProducts?.length"
-            class="text-sm text-gray-400 text-center py-6"
-          >
+          <div v-if="!dashStore.revenue?.topProducts?.length" class="text-sm text-gray-400 text-center py-6">
             Không có dữ liệu trong kỳ này
           </div>
         </div>
@@ -216,23 +120,14 @@
       <template #header>
         <div class="flex items-center justify-between">
           <h3 class="font-semibold text-gray-900">
-            Đơn đã giao gần đây
+            Đơn hoàn thành gần đây
           </h3>
-          <UButton
-            to="/orders"
-            color="neutral"
-            variant="ghost"
-            size="sm"
-            trailing-icon="i-heroicons-arrow-right"
-          >
+          <UButton to="/orders" color="neutral" variant="ghost" size="sm" trailing-icon="i-heroicons-arrow-right">
             Xem tất cả
           </UButton>
         </div>
       </template>
-      <UTable
-        :data="recentDeliveredOrders"
-        :columns="orderColumns"
-      >
+      <UTable :data="recentDeliveredOrders" :columns="orderColumns">
         <template #code-cell="{ row }">
           <span class="font-mono text-xs text-gray-600">{{ row.original.code }}</span>
         </template>
@@ -254,7 +149,7 @@
         </template>
         <template #empty>
           <div class="text-center py-6 text-gray-400 text-sm">
-            Chưa có đơn đã giao
+            Chưa có đơn hoàn thành
           </div>
         </template>
       </UTable>
@@ -326,10 +221,9 @@ function shouldShowLabel(idx: number): boolean {
   if (len <= 15) return idx % 2 === 0
   return idx % 5 === 0
 }
+
 const recentDeliveredOrders = computed(() =>
-  (dashStore.stats?.recentOrders || [])
-    .filter(o => o.status === 'DELIVERED')
-    .slice(0, 10)
+  (dashStore.stats?.recentOrders || []).slice(0, 10)
 )
 
 const orderColumns = [
