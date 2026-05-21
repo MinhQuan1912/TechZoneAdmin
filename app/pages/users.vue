@@ -154,7 +154,7 @@
               <br />Một email thông báo sẽ được gửi đến người dùng.
             </p>
 
-            <UFormField label="Lý do khóa" hint="Không bắt buộc">
+            <UFormField label="Lý do khóa">
               <UTextarea v-model="blockReason" placeholder="Ví dụ: Vi phạm điều khoản sử dụng..." :rows="3"
                 class="w-full" />
             </UFormField>

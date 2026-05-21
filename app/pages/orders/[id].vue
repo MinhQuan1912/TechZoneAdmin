@@ -44,6 +44,13 @@
                      <p class="text-gray-500 mb-1">Ghi chú</p>
                      <p class="text-gray-600 italic">{{ store.current.note }}</p>
                   </div>
+                  <div v-if="store.current.status === 'CANCELLED'"
+                     class="mt-2 p-3 bg-red-50 rounded-lg border border-red-100">
+                     <p class="text-sm font-medium text-red-700 mb-1">Lý do hủy</p>
+                     <p class="text-sm italic" :class="store.current.cancelReason ? 'text-red-600' : 'text-red-400'">
+                        {{ store.current.cancelReason || 'Không có lý do cụ thể' }}
+                     </p>
+                  </div>
                </div>
             </UCard>
 
@@ -88,7 +95,7 @@
                         class="w-full" />
 
                      <UButton color="primary" class="w-full" :loading="updating" :disabled="!newStatus"
-                        @click="doUpdateStatus">
+                        @click="newStatus === 'CANCELLED' ? openCancelModal() : doUpdateStatus()">
                         Cập nhật
                      </UButton>
                   </div>
@@ -129,6 +136,21 @@
          </UCard>
       </template>
    </div>
+   <UModal v-model:open="showCancelModal">
+      <template #content>
+         <div class="p-6 space-y-4">
+            <h3 class="text-lg font-semibold">Xác nhận hủy đơn hàng</h3>
+            <p class="text-sm text-gray-500">Hành động này sẽ hủy đơn và gửi email thông báo đến khách hàng.</p>
+            <UFormField label="Lý do hủy (không bắt buộc)">
+               <UTextarea v-model="cancelReason" placeholder="Nhập lý do hủy đơn..." :rows="3" class="w-full" />
+            </UFormField>
+            <div class="flex gap-3 justify-end">
+               <UButton color="neutral" variant="outline" @click="showCancelModal = false">Hủy bỏ</UButton>
+               <UButton color="error" :loading="updating" @click="doUpdateStatus">Xác nhận hủy</UButton>
+            </div>
+         </div>
+      </template>
+   </UModal>
 </template>
 
 <script setup lang="ts">
@@ -143,6 +165,8 @@ const { formatCurrency, formatDate } = useFormat()
 const orderId = Number(route.params.id)
 const updating = ref(false)
 const newStatus = ref('')
+const showCancelModal = ref(false)
+const cancelReason = ref('')
 
 const statusColors: Record<OrderStatus, string> = {
    PENDING: 'warning', CONFIRMED: 'info',
@@ -167,12 +191,23 @@ const availableStatuses = computed(() => {
    }))
 })
 
+function openCancelModal() {
+   cancelReason.value = ''
+   showCancelModal.value = true
+}
+
 async function doUpdateStatus() {
    if (!newStatus.value) return
    updating.value = true
    try {
-      await store.updateStatus(orderId, newStatus.value as OrderStatus)
+      await store.updateStatus(
+         orderId,
+         newStatus.value as OrderStatus,
+         newStatus.value === 'CANCELLED' ? (cancelReason.value || undefined) : undefined,
+      )
       newStatus.value = ''
+      showCancelModal.value = false
+      cancelReason.value = ''
    } finally {
       updating.value = false
    }

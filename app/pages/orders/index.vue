@@ -53,7 +53,7 @@
               :to="`/orders/${row.original.id}`" />
             <USelect v-if="nextStatusOptions(row.original.status).length > 0" :model-value="row.original.status"
               :items="nextStatusOptions(row.original.status)" size="xs" class="w-36"
-              @update:model-value="(val: string) => updateStatus(row.original.id, val)" />
+              @update:model-value="(val: string) => onSelectStatus(row.original.id, val)" />
           </div>
         </template>
         <template #empty>
@@ -65,6 +65,21 @@
         :items-per-page="store.limit" @change="store.changePage" />
     </UCard>
   </div>
+  <UModal v-model:open="showCancelModal">
+    <template #content>
+      <div class="p-6 space-y-4">
+        <h3 class="text-lg font-semibold">Xác nhận hủy đơn hàng</h3>
+        <p class="text-sm text-gray-500">Hành động này sẽ hủy đơn và gửi email thông báo đến khách hàng.</p>
+        <UFormField label="Lý do hủy (không bắt buộc)">
+          <UTextarea v-model="cancelReason" placeholder="Nhập lý do hủy đơn..." :rows="3" class="w-full" />
+        </UFormField>
+        <div class="flex gap-3 justify-end">
+          <UButton color="neutral" variant="outline" @click="showCancelModal = false">Hủy bỏ</UButton>
+          <UButton color="error" :loading="cancelling" @click="confirmCancel">Xác nhận hủy</UButton>
+        </div>
+      </div>
+    </template>
+  </UModal>
 </template>
 
 <script setup lang="ts">
@@ -75,6 +90,10 @@ import type { OrderStatus } from '~/types'
 const ALL_STATUSES = '__all__'
 const store = useOrderStore()
 const { formatCurrency, formatDate } = useFormat()
+const showCancelModal = ref(false)
+const cancelReason = ref('')
+const cancelling = ref(false)
+const pendingCancel = ref<{ id: number; status: string } | null>(null)
 
 const statusColors: Record<OrderStatus, string> = {
   PENDING: 'warning', CONFIRMED: 'info',
@@ -104,6 +123,32 @@ function nextStatusOptions(current: OrderStatus) {
   }
   const next = map[current] || []
   return next.map(s => ({ label: statusLabels[s as OrderStatus], value: s }))
+}
+function onSelectStatus(id: number, status: string) {
+  if (status === 'CANCELLED') {
+    pendingCancel.value = { id, status }
+    cancelReason.value = ''
+    showCancelModal.value = true
+  } else {
+    updateStatus(id, status)
+  }
+}
+
+async function confirmCancel() {
+  if (!pendingCancel.value) return
+  cancelling.value = true
+  try {
+    await store.updateStatus(
+      pendingCancel.value.id,
+      pendingCancel.value.status as OrderStatus,
+      cancelReason.value || undefined,
+    )
+    showCancelModal.value = false
+    cancelReason.value = ''
+    pendingCancel.value = null
+  } finally {
+    cancelling.value = false
+  }
 }
 
 const columns = [

@@ -101,6 +101,8 @@ export interface Order {
   recipientPhone: string;
   recipientAddress: string;
   note: string | null;
+  cancelReason: string | null;
+  deliveredAt?: string | null;
   createdAt: string;
   updatedAt: string;
   user: { id: number; name: string; email: string };

@@ -45,10 +45,14 @@ export const useOrderStore = defineStore("orders", () => {
     }
   }
 
-  async function updateStatus(id: number, status: OrderStatus) {
+  async function updateStatus(
+    id: number,
+    status: OrderStatus,
+    reason?: string,
+  ) {
     const res = await api<Order>(`/orders/${id}/status`, {
       method: "PATCH",
-      body: { status },
+      body: reason ? { status, reason } : { status },
     });
     const idx = items.value.findIndex((o) => o.id === id);
     if (idx !== -1) items.value[idx] = { ...items.value[idx], ...res };
