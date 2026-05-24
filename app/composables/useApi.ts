@@ -1,5 +1,5 @@
 import { useAuthStore } from '~/stores/auth'
-
+let refreshPromise: Promise<void> | null = null;
 export const useApi = () => {
   const authStore = useAuthStore()
   const config = useRuntimeConfig()
@@ -35,7 +35,12 @@ export const useApi = () => {
     } catch (error: any) {
       if (error?.status === 401) {
         try {
-          await authStore.doRefresh()
+          if (!refreshPromise) {
+            refreshPromise = authStore.doRefresh().finally(() => {
+              refreshPromise = null;
+            });
+          }
+          await refreshPromise;
           return await doFetch()
         } catch {
           await authStore.logout()
