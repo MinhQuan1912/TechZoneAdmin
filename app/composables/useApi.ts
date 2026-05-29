@@ -57,7 +57,7 @@ export const useApi = () => {
   }
 
   async function upload<T = any>(url: string, formData: FormData): Promise<T> {
-    try {
+    const doFetch = async (): Promise<T> => {
       const result = await $fetch<{ success: boolean; data: T }>(url, {
         baseURL,
         method: "POST",
@@ -67,32 +67,88 @@ export const useApi = () => {
           "ngrok-skip-browser-warning": "true",
         },
       });
-      return result.data
-    } catch (error: any) {
-      const msg = error?.data?.message || 'Upload thất bại'
-      toast.add({ title: 'Lỗi upload', description: msg, color: 'error' })
-      throw error
+
+      return result.data;
+    };
+
+    try {
+      return await doFetch();
+    } catch (err: any) {
+      if (err.status === 401) {
+        try {
+          if (!refreshPromise) {
+            refreshPromise = authStore.doRefresh().finally(() => {
+              refreshPromise = null;
+            });
+          }
+
+          await refreshPromise;
+          return await doFetch();
+        } catch (refreshError) {
+          authStore.logout();
+          toast.add({
+            title: "Phiên đăng nhập hết hạn",
+            description: "Vui lòng đăng nhập lại",
+            color: "error",
+          });
+          throw refreshError;
+        }
+      }
+
+      const msg = Array.isArray(err?.data?.message)
+        ? err.data.message.join(", ")
+        : err?.data?.message || "Upload thất bại";
+
+      toast.add({
+        title: "Lỗi upload",
+        description: msg,
+        color: "error",
+      });
+
+      throw err;
     }
   }
 
   async function uploadPatch<T = any>(url: string, formData: FormData): Promise<T> {
-    try {
-      const result = await $fetch<{ success: boolean; data: T }>(url, {
-        baseURL,
-        method: "PATCH",
-        body: formData,
-        credentials: "include",
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-        },
-      });
-      return result.data
-    } catch (error: any) {
-      const msg = error?.data?.message || 'Cập nhật thất bại'
-      toast.add({ title: 'Lỗi', description: msg, color: 'error' })
-      throw error
+  const doFetch = async () => {
+    const result = await $fetch<{ success: boolean; data: T }>(url, {
+      baseURL,
+      method: "PATCH",
+      body: formData,
+      credentials: "include",
+      headers: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
+
+    return result.data;
+  };
+
+  try {
+    return await doFetch();
+  } catch (error: any) {
+    if (error?.status === 401) {
+      try {
+        if (!refreshPromise) {
+          refreshPromise = authStore.doRefresh().finally(() => {
+            refreshPromise = null;
+          });
+        }
+
+        await refreshPromise;
+        return await doFetch();
+      } catch {
+        await authStore.logout();
+        await navigateTo("/login");
+        throw error;
+      }
     }
+
+    const msg = error?.data?.message || "Cập nhật thất bại";
+    toast.add({ title: "Lỗi", description: msg, color: "error" });
+    throw error;
   }
+}
 
   return { api, upload, uploadPatch }
 }
