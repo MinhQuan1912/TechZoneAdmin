@@ -507,7 +507,16 @@ async function handleSubmit() {
     }
 
     toast.add({ title: 'Đã cập nhật sản phẩm', color: 'success' })
-    await navigateTo('/products')
+    newVariants.value = []
+    toDeleteImageIds.value = []
+    newImageFiles.value = []
+    newImagePreviews.value.forEach(url => URL.revokeObjectURL(url))
+    newImagePreviews.value = []
+
+    await productStore.fetchOne(productId)
+    if (productStore.current) {
+      initVariantForms(productStore.current.variants)
+    }
   } finally {
     loading.value = false
   }
