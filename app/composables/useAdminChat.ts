@@ -22,10 +22,19 @@ export const useAdminChat = () => {
     }
   }
 
-  function connect() {
+  async function connect() {
     if (!import.meta.client) return
     if (socket?.connected) return
+    const authStore = useAuthStore()
 
+    try {
+      await authStore.doRefresh();
+    } catch {
+      await authStore.logout();
+      await navigateTo("/login");
+      return;
+    }
+    
     socket = io(
       `${useRuntimeConfig().public.apiBase.replace("/api", "")}/chat`,
       {
