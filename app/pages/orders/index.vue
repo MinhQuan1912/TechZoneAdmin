@@ -41,7 +41,7 @@
         </template>
         <template #isPaid-cell="{ row }">
           <UBadge :color="row.original.isPaid ? 'success' : 'warning'" variant="soft">
-            {{ row.original.isPaid ? 'Đã TT' : 'Chưa TT' }}
+            {{ row.original.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán' }}
           </UBadge>
         </template>
         <template #createdAt-cell="{ row }">
@@ -51,9 +51,13 @@
           <div class="flex gap-2">
             <UButton size="xs" color="neutral" variant="outline" icon="i-heroicons-eye"
               :to="`/orders/${row.original.id}`" />
-            <USelect v-if="nextStatusOptions(row.original.status).length > 0" :model-value="row.original.status"
-              :items="nextStatusOptions(row.original.status)" size="xs" class="w-36"
-              @update:model-value="(val: string) => onSelectStatus(row.original.id, val)" />
+            <UDropdownMenu v-if="nextStatusOptions(row.original.status).length > 0"
+              :items="statusDropdownItems(row.original.id, row.original.status)">
+              <UButton size="xs" color="neutral" variant="outline" class="w-36 justify-between"
+                trailing-icon="i-heroicons-chevron-down-20-solid">
+                {{ statusLabels[row.original.status] }}
+              </UButton>
+            </UDropdownMenu>
           </div>
         </template>
         <template #empty>
@@ -101,7 +105,7 @@ const statusColors: Record<OrderStatus, string> = {
   COMPLETED: 'success', CANCELLED: 'error',
 }
 const statusLabels: Record<OrderStatus, string> = {
-  PENDING: 'Chờ XN', CONFIRMED: 'Đã XN',
+  PENDING: 'Chờ xác nhận', CONFIRMED: 'Đã xác nhận',
   SHIPPING: 'Đang giao', DELIVERED: 'Đã giao',
   COMPLETED: 'Hoàn thành', CANCELLED: 'Đã hủy',
 }
@@ -171,6 +175,13 @@ function resetFilter() {
   store.search = ''
   store.page = 1
   store.fetchAll()
+}
+
+function statusDropdownItems(id: number, current: OrderStatus) {
+  return nextStatusOptions(current).map(item => ({
+    label: item.label,
+    onSelect: () => onSelectStatus(id, item.value),
+  }))
 }
 
 async function updateStatus(id: number, status: string) {
