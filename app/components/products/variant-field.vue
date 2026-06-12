@@ -36,7 +36,6 @@
       <div class="mt-3 pt-3 border-t border-gray-100">
         <p class="text-sm font-medium text-gray-700 mb-2">
           Ảnh màu
-          <span class="text-xs text-gray-400 ml-1">(tuỳ chọn)</span>
         </p>
         <div class="flex items-center gap-4">
           <div v-if="variant.previewImageUrl"
