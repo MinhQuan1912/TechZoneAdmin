@@ -89,9 +89,6 @@
             <h3 class="font-semibold">
               Biến thể sản phẩm *
             </h3>
-            <p class="text-xs text-gray-400 mt-0.5">
-              Ảnh theo màu có thể upload sau khi tạo sản phẩm (trang Chỉnh sửa)
-            </p>
           </div>
         </template>
         <ProductsVariantField v-model="form.variants" />
