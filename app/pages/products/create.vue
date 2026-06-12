@@ -201,6 +201,23 @@ async function handleSubmit() {
     productImageFiles.value.forEach(f => formData.append('images', f))
 
     const product = await productStore.create(formData)
+    const hasVariantImages = form.variants.some(v => v.imageFile)
+    if (hasVariantImages) {
+      const createdVariants = [...(product?.variants || [])].sort(
+        (a: any, b: any) => a.id - b.id
+      )
+      await Promise.allSettled(
+        form.variants.map(async (v, i) => {
+          if (v.imageFile && createdVariants[i]?.id) {
+            try {
+              await productStore.setVariantImage(createdVariants[i].id, v.imageFile)
+            } catch {
+              toast.add({ title: `Lưu ảnh biến thể #${i + 1} thất bại`, color: 'warning' })
+            }
+          }
+        })
+      )
+    }
     toast.add({ title: 'Đã tạo sản phẩm!', color: 'success' })
     await navigateTo(`/products/${(product as any).id}/edit`)
   } finally {
@@ -214,5 +231,8 @@ onMounted(() => {
 
 onUnmounted(() => {
   productImagePreviews.value.forEach(url => URL.revokeObjectURL(url))
+  form.variants.forEach(v => {
+    if (v.previewImageUrl) URL.revokeObjectURL(v.previewImageUrl)
+  })
 })
 </script>
