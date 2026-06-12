@@ -184,7 +184,7 @@
               <!-- Ảnh màu -->
               <div class="border-t border-gray-100 pt-4">
                 <p class="text-sm font-medium text-gray-700 mb-3">
-                  Ảnh cho màu <span class="text-primary-600">{{ variant.color || 'này' }}</span>
+                  Ảnh cho màu
                 </p>
                 <div class="flex items-start gap-4">
                   <div class="shrink-0">
@@ -436,7 +436,7 @@ async function toggleVariantActive(variantId: number, isActive: boolean) {
 async function saveVariant(variantId: number) {
   const f = variantForms.value[variantId]
   if (!f.stock || !f.originalPrice || !f.salePrice) {
-    return toast.add({ title: 'Điền đủ stock và giá', color: 'error' })
+    return toast.add({ title: 'Điền đủ tồn kho và giá', color: 'error' })
   }
   if (Number(f.salePrice) > Number(f.originalPrice)) {
     return toast.add({ title: 'Giá bán không được cao hơn giá gốc', color: 'error' })

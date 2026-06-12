@@ -54,9 +54,6 @@
             <UIcon name="i-heroicons-camera" class="w-6 h-6 text-gray-300 mb-1" />
             <span class="text-xs text-gray-400">Chọn ảnh</span>
           </div>
-          <p class="text-xs text-gray-400">
-            {{ variant.previewImageUrl ? 'Ảnh sẽ upload khi lưu sản phẩm' : 'Ảnh đại diện cho màu này' }}
-          </p>
         </div>
         <input :ref="el => { if (el) fileInputs[index] = el as HTMLInputElement }" type="file" accept="image/*"
           class="hidden" @change="e => onFileChange(e, index)" />
