@@ -201,7 +201,7 @@ async function handleSubmit() {
     productImageFiles.value.forEach(f => formData.append('images', f))
 
     const product = await productStore.create(formData)
-    toast.add({ title: 'Đã tạo sản phẩm!', description: 'Bạn có thể upload ảnh màu trong trang chỉnh sửa', color: 'success' })
+    toast.add({ title: 'Đã tạo sản phẩm!', color: 'success' })
     await navigateTo(`/products/${(product as any).id}/edit`)
   } finally {
     loading.value = false
