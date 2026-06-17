@@ -435,8 +435,12 @@ async function toggleVariantActive(variantId: number, isActive: boolean) {
 
 async function saveVariant(variantId: number) {
   const f = variantForms.value[variantId]
-  if (!f.stock || !f.originalPrice || !f.salePrice) {
-    return toast.add({ title: 'Điền đủ tồn kho và giá', color: 'error' })
+  if (
+    f.stock === '' ||
+    f.originalPrice === '' ||
+    f.salePrice === ''
+  ) {
+    return toast.add({ title: 'Điền đủ stock và giá', color: 'error' })
   }
   if (Number(f.salePrice) > Number(f.originalPrice)) {
     return toast.add({ title: 'Giá bán không được cao hơn giá gốc', color: 'error' })
