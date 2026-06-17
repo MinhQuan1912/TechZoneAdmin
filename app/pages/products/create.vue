@@ -174,6 +174,12 @@ async function handleSubmit() {
     if (!v.originalPrice || !v.salePrice || v.stock === '') {
       return toast.add({ title: `Biến thể #${i + 1}: điền đủ giá và tồn kho`, color: 'error' })
     }
+    if (Number(v.originalPrice) < Number(v.salePrice)) {
+      return toast.add({
+        title: 'Giá gốc phải lớn hơn hoặc bằng giá bán',
+        color: 'error'
+      })
+    }
   }
 
   loading.value = true
