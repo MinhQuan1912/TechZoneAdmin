@@ -165,8 +165,7 @@
                   <UInput v-model="variantForms[variant.id].version" class="w-full" />
                 </UFormField>
                 <UFormField label="Tồn kho *">
-                  <UInput v-model="variantForms[variant.id].stock" type="number" :min="0" class="w-full"
-                    :class="Number(variantForms[variant.id].stock) === 0 ? 'ring-2 ring-red-400' : ''" />
+                  <UInput v-model="variantForms[variant.id].stock" type="number" :min="0" class="w-full" />
                 </UFormField>
                 <UFormField label="Giá gốc (đ) *">
                   <UInput v-model="variantForms[variant.id].originalPrice" type="number" :min="0" class="w-full" />
