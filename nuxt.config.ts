@@ -17,7 +17,7 @@ export default defineNuxtConfig({
   css: ["~/assets/css/main.css"],
   runtimeConfig: {
     public: {
-      apiBase: "https://proofing-manhood-quirk.ngrok-free.dev/api",
+      apiBase: "https://merry-spontaneity-production-667a.up.railway.app/api",
     },
   },
   future: {
